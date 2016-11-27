@@ -1,0 +1,76 @@
+
+CREATE (sam:Sample {
+    name : "name"
+    creationDate : ""
+    creator :
+    isolMethod :
+    parent :
+    errors :
+    volume :
+    notes :
+    details :
+    rin :
+    concBio :
+    corrConcBio :
+    dilution :
+    a280 :
+    a230 :
+    nanoDrop :
+    yieldBio :
+    yieldNano :
+    }
+)
+RETURN sam
+
+
+CREATE (a:Sample {name: "A"})
+     , (b:Sample {name: "B"})
+     , (c:Sample {name: "C"})
+     , (d:Sample {name: "D"})
+     , (e:Sample {name: "E"})
+     , (f:Sample {name: "F"})
+     , (g:Sample {name: "G"})
+     , (h:Sample {name: "H"})
+     , (i:Sample {name: "I"})
+     , (j:Sample {name: "J"})
+     , (k:Sample {name: "K"})
+     , (l:Sample {name: "L"})
+     , (m:Sample {name: "M"})
+     , (n:Sample {name: "N"})
+     , (o:Sample {name: "O"})
+     , (p:Sample {name: "P"})
+RETURN a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p
+
+MATCH (n) DELETE n
+
+
+
+MATCH (i:Sample {name: "I"}),
+      (d:Sample {name: "D"}),
+      (j:Sample {name: "J"})
+MERGE (i)-[:GENERATED]->(d)-[:CHILD_OF]->(i)
+MERGE (i)-[:GENERATED]->(j)-[:CHILD_OF]->(i)
+
+
+MATCH (g:Sample {name: "G"}),
+      (h:Sample {name: "H"}),
+      (f:Sample {name: "F"})
+MERGE (g)-[:COMPOSED]->(f)<-[:COMPOSED]-(h)
+MERGE (g)<-[:SUM_OF]-(f)-[:SUM_OF]->(h)
+
+
+MATCH (c:Sample {name: "C"}),
+      (e:Sample {name: "E"})
+MERGE (c)-[:BECAME]->(e)-[:CLONED]->(c)
+MERGE (c)-[:BECAME]->(e)-[:CLONED]->(c)
+
+match (n:Node {name: 'abc'})
+with n as map
+create (copy:Node)
+set copy=map return copy
+
+
+
+
+match (p:Sample {name:"P"})-[:CHILD_OF*]->(lineage:Sample)
+return p, lineage;

@@ -1,0 +1,42 @@
+code [id]
+name [Sample name]
+creationDate
+creator [Initials]
+isolMethod [Isolation Method]
+parent [Source of sample]
+details [on how sample was prepared]
+errors [Possible sources of error]
+volume [Elution volume (uL)]
+notes [Other notes]
+rin [Bioanalyzer results (RIN)]]
+concBio [concentration Bioanalyzer (pg/uL)]
+dilution [Dilution factor]
+corrConcBio [concentration Bioanalyzer (ng/uL) CORRECTED FOR DILUTION]
+yieldBio [yield Bioanalyzer (ng)  [Multiply elution volume (uL) by concentration (ng/uL)]]
+a280 [A260/280]
+a230 [A260/230]
+nanoDrop [concentration NanoDrop (ng/uL)]
+yieldNano [yield NanoDrop (ng) [Multiply elution volume (uL) by concentration (ng/uL)]]
+
+
+
++ code: number
++ name: string
++ creationDate: string
++ creator: string
++ isolMethod: string
++ parent: number
++ errors: string
++ volume: string
++ notes: string
++ details: string
++ rin: string
++ concBio: string
++ corrConcBio: string
++ dilution: string
++ a280: string
++ a230: string
++ nanoDrop: string
++ yieldBio: string
++ yieldNano: string
+

@@ -1,0 +1,9 @@
+*.pyc
+*.idea
+*.DS_Store
+instance/
+_site/
+
+venv/
+
+**/vendor/
