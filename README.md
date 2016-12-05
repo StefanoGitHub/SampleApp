@@ -5,7 +5,7 @@ see [http://nicolewhite.github.io/neo4j-flask/index.html](http://nicolewhite.git
 
 ## Usage
 
-Make sure [Neo4j](http://neo4j.com/download/other-releases/) is running first!
+Make sure Neo4j is running first!
 
 **If you're on Neo4j >= 2.2, make sure to set environment variables `NEO4J_USERNAME` and `NEO4J_PASSWORD`
 to your username and password, respectively:**
@@ -37,6 +37,7 @@ Start:
 ```
 source venv/bin/activate
 python run.py
+
 ```
 
 Data example + info

@@ -30,7 +30,7 @@ class Sample:
         self.dilution = newsample.dilution
         self.a280 = newsample.a280
         self.a230 = newsample.a230
-        self.nanoDrop = newsample.nanoDrop
+        self.concNano = newsample.concNano
         self.yieldBio = newsample.yieldBio
         self.yieldNano = newsample.yieldNano
         
@@ -55,13 +55,21 @@ class Sample:
             dilution = self.dilution,
             a280 = self.a280,
             a230 = self.a230,
-            nanoDrop = self.nanoDrop,
+            concNano = self.concNano,
             yieldBio = self.yieldBio,
             yieldNano = self.yieldNano,
         )
         graph.create(newsample)
         return self
 
+    def get_lineage(self):
+        query = '''
+            MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
+            WHERE s.name = {name}
+            RETURN s, lineage
+        '''
+        return graph.run(query, name = self.name)
+        
 
     def find(self):
         sample = graph.find_one('Sample', '_id', self._id)  # returns None obj if not found
