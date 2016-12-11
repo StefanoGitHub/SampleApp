@@ -69,7 +69,14 @@ class Sample:
             RETURN s, lineage
         '''
         return graph.run(query, name = self.name)
-        
+        # nodes_query = '''
+        #     MATCH (a:Person)-[:ACTED_IN]->(:Movie)
+        #     RETURN DISTINCT ID(a) AS id, a.name AS name
+        # '''
+        # edges_query = '''
+        #     MATCH (a1:Person)-[:ACTED_IN]->(:Movie)<-[:ACTED_IN]-(a2:Person)
+        #     RETURN ID(a1) AS source, ID(a2) AS target
+        # '''
 
     def find(self):
         sample = graph.find_one('Sample', '_id', self._id)  # returns None obj if not found

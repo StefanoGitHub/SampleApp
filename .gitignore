@@ -6,4 +6,6 @@ _site/
 
 venv/
 
+**/node_module/
+**/bower_components/
 **/vendor/

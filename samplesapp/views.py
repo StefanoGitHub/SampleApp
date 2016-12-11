@@ -61,6 +61,14 @@ def new_sample():
     return render_template('new_sample.html')
 
 
+@app.route('/samples', methods = ['GET', 'POST'])
+def show_sample():
+    # if request.method == 'POST':
+    #     details = request.form
+    #     flash('Success! Your new sample has been saved', 'info')
+    return render_template('show_samples.html')
+
+
 @app.route('/like_post/<post_id>')
 def like_post(post_id):
     username = session.get('username')  # none if not exists

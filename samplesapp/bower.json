@@ -1,0 +1,20 @@
+{
+  "name": "samplesapp",
+  "homepage": "https://github.com/StefanoGitHub/SampleApp",
+  "authors": [
+    "StefanoGitHub <stefano.borghi@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "alchemyjs": "^0.4.2"
+  }
+}
