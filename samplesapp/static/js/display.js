@@ -9,10 +9,8 @@ var $graph = $('#graph'),
         "gray": "#708284",
         "mediumgray": "#536870",
         "darkgray": "#475B62",
-
         "darkblue": "#0A2933",
         "darkerblue": "#042029",
-
         "paleryellow": "#FCF4DC",
         "paleyellow": "#EAE3CB",
         "yellow": "#A57706",
@@ -45,6 +43,8 @@ nodes.forEach(function(node, i) {
         });
     }
 });
+
+debugger;
 
 // define drawing area
 var myChart = d3.select('#graph')

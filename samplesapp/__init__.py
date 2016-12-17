@@ -1,4 +1,4 @@
-from .views import app
+from .routes import app
 from .models import graph
 
 # -----------

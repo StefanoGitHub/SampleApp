@@ -1,0 +1,13 @@
+{% extends "layouts/layout.html" %}
+
+{% block page %}
+
+    <h2>Samples</h2>
+
+    <div id="graph" class="graph"></div>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>
+    <script type="text/javascript" >var nodes = {{ nodes|tojson }};</script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/display.js') }}"></script>
+
+{% endblock page %}

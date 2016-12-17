@@ -15,40 +15,44 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block }
 /* end reset ----- */
 
-/* Solarized Palette - http://ethanschoonover.com/solarized ---------
-  lightgray      : #819090;
-  gray           : #708284;
-  mediumgray     : #536870;
-  darkgray       : #475B62;
-  darkblue       : #0A2933;
-  darkerblue     : #042029;
-  paleryellow    : #FCF4DC;
-  paleyellow     : #EAE3CB;
-  yellow         : #A57706;
-  orange         : #BD3613;
-  red            : #D11C24;
-  pink           : #C61C6F;
-  purple         : #595AB7;
-  blue           : #2176C7;
-  cyan           : #259286;
-  green          : #738A05; */
+/* Solarized Palette - http://ethanschoonover.com/solarized --------- */
+.colors {
+    lightgray: #819090;
+    gray: #708284;
+    mediumgray: #536870;
+    darkgray: #475B62;
+    darkblue: #0A2933;
+    darkerblue: #042029;
+    paleryellow: #FCF4DC;
+    paleyellow: #EAE3CB;
+    yellow: #A57706;
+    orange: #BD3613;
+    red: #D11C24;
+    pink: #C61C6F;
+    purple: #595AB7;
+    blue: #2176C7;
+    cyan: #259286;
+    green: #738A05;
+}
 
 body { font-family: "Exo 2", "Helvetica Neue", Helvetica, sans-serif; font-weight: 300;
-    font-size: 1.2em; line-height: 1.2em; background: #FDF6E3; color: #475B62; }
+    font-size: 1em; line-height: 1.2em; background: lightyellow; color: #475B62; }
 strong { font-weight: 600; }
 h1, h2, h3, h4, h5, h6 { font-family: 'Roboto Slab', "Helvetica Neue", Helvetica, sans-serif; font-weight: 700;
-    color: #CB4B19; font-size: 1.75em; margin-bottom: .4em; }
+    color: #CB4B19; font-size: 1.75em; margin: 1.2em 0 1em; }
 p { margin-bottom: .5em; }
 
-section { width: 90%; margin: 0 auto; }
+.page { width: 90%; margin: 0 auto; }
 
-footer { margin: 2em 5% 1em; padding: 2em 0 1em; font-size: .8em; text-align: right;}
+.navbar { text-align: right; background: gold; }
+.navlinks { width: 90%; padding: 11px 0;}
 
-/*ol, ul { list-style: none }*/
+footer { margin: 2em 5% 1em; padding: 2em 0 1em; font-size: .7em; text-align: right;}
 
-.metanav { text-align: right; font-size: 0.8em; padding: 0.3em; margin-bottom: 1em; background: #fafafa; }
 .flash { background: #cee5F5; padding: 0.5em; border: 1px solid #aacbe2; }
 .error { background: #f0d6d6; padding: 0.5em; }
+
+
 
 /* RESPONSIVE styles --------- */
 
