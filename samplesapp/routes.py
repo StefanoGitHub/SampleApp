@@ -6,8 +6,8 @@ app = Flask(__name__)
 
 # welcome, choose what to do: add, delete or display
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('home.html')
 
 
 # add new sample

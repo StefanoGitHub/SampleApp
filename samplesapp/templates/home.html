@@ -1,0 +1,25 @@
+{% extends "layouts/layout.html" %}
+
+{% block page %}
+
+    <link href="{{ url_for('static', filename='vendor/font-awesome-4.7.0/css/font-awesome.min.css') }}"
+          rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+
+
+    <h2>Welcome, please select</h2>
+
+    <div class="button-group">
+        <a id="new" type="button" class="btn btn-primary btn-lg big gradient raised"
+        href="{{ url_for('add') }}">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            New sample
+        </a>
+        <a id="show" type="button" class="btn btn-primary btn-lg big gradient raised"
+           href="{{ url_for('display') }}">
+            <i class="fa fa-code-fork" aria-hidden="true"></i>
+            Show samples
+        </a>
+    </div>
+
+{% endblock page %}

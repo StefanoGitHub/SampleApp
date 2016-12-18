@@ -27,4 +27,11 @@
 </head>
 <body>
 
-{% include "layouts/nav.html" %}
+<div class="navbar">
+
+    {% if request.path != "/" %}
+        {% include "layouts/navlinks.html" %}
+    {% endif %}
+
+</div>
+
