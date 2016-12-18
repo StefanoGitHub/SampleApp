@@ -6,6 +6,8 @@ _site/
 
 venv/
 
+samplesDB/*
+
 **/node_module/
 **/bower_components/
 **/vendor/

@@ -1,5 +1,5 @@
 from .routes import app
-from .models import graph
+from .samples import graph
 
 # -----------
 # flask_assets

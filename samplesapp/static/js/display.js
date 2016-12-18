@@ -1,7 +1,8 @@
+//adapt graph area to page
 var $graph = $('#graph'),
     docH = $(document).height(),
-    w = $graph.width(),
-    h = $graph.height(docH * .7).height(),
+    width = $graph.width(),
+    height = $graph.height(docH * .8).height(),
     circleWidth = 10,
     palette = {
         "lightgray": "#819090",
@@ -21,59 +22,67 @@ var $graph = $('#graph'),
         "green": "#259286",
         "yellowgreen": "#738A05"
     };
+//Set up the colour scale
+var color = d3.scale.category20();
 
-var dataNodes = data.nodes;
-var dataLinks = data.links;
+// adapt links to D3 format
+data.links.forEach(function(el) {
+    var sourceId = el.source;
+    var targetId = el.target;
+    var sourceNode = function(element){
+        return element.id == sourceId
+    };
+    var targetNode = function(element){
+        return element.id == targetId
+    };
+    el.source = data.nodes.findIndex(sourceNode);
+    el.target = data.nodes.findIndex(targetNode);
+});
 
-// define drawing area
-var myChart = d3.select('#graph')
-    .append('svg')
-    .attr('width', w)
-    .attr('height', h);
 
-var svg = d3.select("#graph").append("svg")
-    .attr("width", w).attr("height", h);
-
+//Set up the force layout
 var force = d3.layout.force()
-    .charge(-200).linkDistance(30).size([w, h]);
-// create graph layout
-// var force = d3.layout.force()
-//     .nodes(dataNodes)
-//     .links(dataLinks)
-//     .gravity(.1)
-//     .linkDistance(150)
-//     .charge(-1000)
-//     .size([w, h]);
+    // .charge(-120)
+    .linkDistance(100)
+    // .gravity(.5)
+    .charge(-150)
 
-// create graph's links
-// var link = myChart.selectAll('line')
-//     .data(dataLinks).enter().append('line')
-//     .attr('stroke', palette.gray);
-//
-// // create nodes
-// var node = myChart.selectAll('circle')
-//     .data(dataNodes).enter()
-//     .append('g')
-//     .call(force.drag);
+    .size([width, height]);
 
-force.nodes(data.nodes).links(data.links).start();
+//Append a SVG to the body of the html page. Assign this SVG as an object to svg
+var svg = d3.select("#graph").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+//Creates the graph data structure out of the json data
+force.nodes(data.nodes)
+    .links(data.links)
+    .start();
+
+//Create all the line svgs but without locations yet
 var link = svg.selectAll(".link")
-    .data(data.links).enter()
-    .append("line").attr("class", "link");
+    .data(data.links)
+    .enter().append("line")
+    .attr("class", "link")
+    .style("stroke-width", function (d) {
+        return Math.sqrt(d.value);
+    });
+
+//Do the same with the circles for the nodes - no
 var node = svg.selectAll(".node")
-    .data(data.nodes).enter()
-    .append("circle")
-    .attr("class", function (d) {
-        return "node " + d.label
+    .data(data.nodes)
+    .enter().append("circle")
+    .attr("class", "node")
+    .attr("r", circleWidth)
+    .style("fill", function (d) {
+        return color(d.group);
     })
-    .attr("r", 10)
     .call(force.drag);
-// html title attribute
-node.append("title")
-    .text(function (d) {
-        return d.title;
-    })
-// force feed algo ticks
+
+
+// Now we are giving the SVGs co-ordinates - the force layout
+// is generating the co-ordinates which this code is using
+// to update the attributes of the SVG elements
 force.on("tick", function () {
     link.attr("x1", function (d) {
         return d.source.x;
@@ -87,6 +96,7 @@ force.on("tick", function () {
         .attr("y2", function (d) {
             return d.target.y;
         });
+
     node.attr("cx", function (d) {
         return d.x;
     })
@@ -94,89 +104,3 @@ force.on("tick", function () {
             return d.y;
         });
 });
-
-
-// draw nodes
-// node.append('circle')
-//     .attr('cx', function (d) {
-//         return d.x;
-//     })
-//     .attr('cy', function (d) {
-//         return d.y;
-//     })
-//     .attr('r', circleWidth)
-//     .attr('fill', function (d, i) {
-//         if (i > 0) {
-//             return palette.pink;
-//         }
-//         return palette.blue;
-//     })
-//     .attr('stroke', palette.lightgray)
-//     .attr('stroke-width', 2);
-
-// draw labels
-// node.append('text')
-//     .text(function (d) {
-//         return d.name;
-//     })
-//     .attr('font-family', 'Roboto Slab')
-//     .attr('fill', function (d, i) {
-//         if (i == 0) {
-//             return palette.yellowgreen;
-//         }
-//         return palette.mediumgray;
-//     })
-//     .attr('x', function (d, i) {
-//         if (i == 0) {
-//             return circleWidth * -2;
-//         }
-//         return circleWidth * 3 / 2;
-//     })
-//     .attr('y', function (d, i) {
-//         return circleWidth / 2;
-//     })
-//     .attr('text-anchor', function (d, i) {
-//         if (i == 0) {
-//             return 'end';
-//         }
-//         return 'beginning'
-//     })
-//     .attr('font-size', function (d, i) {
-//         if (i == 0) {
-//             return '1.8em';
-//         }
-//         return '1em'
-//     });
-
-// define tick marks
-// force.on('tick', function (e) {
-//     debugger;
-//     // update nodes position
-//     nodes.attr('transform', function (d, i) {
-//         debugger;
-//         return 'translate(' + d.x + ', ' + d.y + ')';
-//     });
-//     // update links position
-//     links
-//         .attr('x1', function (d) {
-//             debugger;
-//             return d.source.x
-//         })
-//         .attr('y1', function (d) {
-//             debugger;
-//             return d.source.y
-//         })
-//         .attr('x2', function (d) {
-//             debugger;
-//             return d.target.x
-//         })
-//         .attr('y2', function (d) {
-//             debugger;
-//             return d.target.y
-//         });
-//
-// });
-
-
-force.start();
-

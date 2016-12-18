@@ -22,25 +22,26 @@ CREATE (sam:Sample {
 )
 RETURN sam
 
-
-CREATE (a:Sample {name: "A"})
-     , (b:Sample {name: "B"})
-     , (c:Sample {name: "C"})
-     , (d:Sample {name: "D"})
-     , (e:Sample {name: "E"})
-     , (f:Sample {name: "F"})
-     , (g:Sample {name: "G"})
-     , (h:Sample {name: "H"})
-     , (i:Sample {name: "I"})
-     , (j:Sample {name: "J"})
-     , (k:Sample {name: "K"})
-     , (l:Sample {name: "L"})
-     , (m:Sample {name: "M"})
-     , (n:Sample {name: "N"})
-     , (o:Sample {name: "O"})
-     , (p:Sample {name: "P"})
+// populate DB with dummy data
+CREATE (a:Sample {id: 1, name: "A"})
+     , (b:Sample {id: 2, name: "B"})
+     , (c:Sample {id: 3, name: "C"})
+     , (d:Sample {id: 4, name: "D"})
+     , (e:Sample {id: 5, name: "E"})
+     , (f:Sample {id: 6, name: "F"})
+     , (g:Sample {id: 7, name: "G"})
+     , (h:Sample {id: 8, name: "H"})
+     , (i:Sample {id: 9, name: "I"})
+     , (j:Sample {id: 10, name: "J"})
+     , (k:Sample {id: 11, name: "K"})
+     , (l:Sample {id: 12, name: "L"})
+     , (m:Sample {id: 13, name: "M"})
+     , (n:Sample {id: 14, name: "N"})
+     , (o:Sample {id: 15, name: "O"})
+     , (p:Sample {id: 16, name: "P"})
 RETURN a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p
 
+// get all
 MATCH (n) DELETE n
 
 
@@ -71,6 +72,6 @@ set copy=map return copy
 
 
 
-
+// get lineage
 match (p:Sample {name:"P"})-[:CHILD_OF*]->(lineage:Sample)
 return p, lineage;

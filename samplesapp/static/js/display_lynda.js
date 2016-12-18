@@ -55,19 +55,7 @@ var links = [{
     "source": {"name": "child5", "target": [0, 1, 2, 3]},
     "target": {"name": "child3", "target": [0]}
 }];
-// var links = [];
-// nodes.forEach(function(node, i) {
-//     if (node.target !== undefined) {
-//         node.target.forEach(function (tgt, x) {
-//             links.push({
-//                 source: node,
-//                 target: nodes[node.target[x]]
-//             });
-//         });
-//     }
-// });
 
-debugger;
 
 // define drawing area
 var myChart = d3.select('#graph')
