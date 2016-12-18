@@ -1,5 +1,6 @@
 from py2neo import Graph, Node, Relationship
 from passlib.hash import bcrypt  # encrypt pwd
+from flask import Response
 from datetime import datetime
 import json
 import os
@@ -64,6 +65,11 @@ class Sample:
         return self
 
     def get_lineage(self):
+        # query = '''
+        #     MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
+        #     WHERE s.name = {name}
+        #     RETURN s, lineage
+        # '''
         query = '''
             MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
             WHERE s.name = {name}
@@ -120,18 +126,72 @@ def get_samples():
 
 # def get_all():
 #     query = '''
-#         MATCH path = (s)-[r]-(n)
+#         MATCH path = (s)-[r]->(n)
 #         RETURN s.name AS name, type(r) AS relation, collect(n) AS target
 #     '''
 #     return graph.run(query).data()
 
 def get_all():
+    # query = '''
+    #     MATCH path = (s)-[r]->(n)
+    #     RETURN { sample: s, relations: collect({ type: type(r), target: n }) } AS node
+    # '''
     query = '''
         MATCH path = (s)-[r]->(n)
-        RETURN s.name AS name, collect({ type: type(r), target: n.name }) AS relations
-        ORDER BY name
+        RETURN s AS sample, s.name AS id, collect({ type: type(r), target: n.name }) AS relations
+        ORDER BY sample.name
     '''
-    return graph.run(query).data()
+    results = graph.data(query)
+    nodes = []
+    links = []
+    for node in results:
+        node['sample']['id'] = node['id']
+        nodes.append(node['sample'])
+        source = node['id']
+        for rel in node['relations']:
+            links.append({ "source": source, "target": rel['target'], "type": rel['type'] })
+    return { "nodes": nodes, "links": links }
+    
+    # for node in results:
+    #     if node['sample'] not in nodes:
+    #         nodes.append(node['sample'])
+    #     target = i
+    #     i += 1
+    #     for rel in node['relations']:
+    #         try:
+    #             source = nodes.index(rel['target'])
+    #         except ValueError:
+    #             nodes.append(rel['target'])
+    #             source = i
+    #             i += 1
+    #         links.append({ "source": source, "target": target, "type": rel['type'] })
+    # return { "nodes": nodes, "links": links }
+
+# ------------------------------
+#     results = graph.run(
+#         "MATCH (m:Movie)<-[:ACTED_IN]-(a:Person) "st "
+#         "RETURN m.title as movie, collect(a.name) as cast "imit", 100) })
+#         "LIMIT {limit}", {"limit": 100})
+#     nodes = []
+#     links = []
+#     i = 0
+#     for movie, cast in results:" })
+#         nodes.append({"title": movie, "label": "movie"})
+#         target = i
+#         i += 1
+#         for name in cast:
+#             actor = {"title": name, "label": "actor"}
+#             try:
+#                 source = nodes.index(actor)
+#             except ValueError:
+#                 nodes.append(actor)
+#                 source = i
+#                 i += 1
+#             links.append({"source": source, "target": target})}),
+#     return {"nodes": nodes, "links": links}
+# ------------------------------------
+
+
 
 def timestamp():
     epoch = datetime.utcfromtimestamp(0)

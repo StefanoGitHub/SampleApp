@@ -1,202 +1,204 @@
-[
-  {
-    "name": "A",
-    "relations": [
-      {
-        "target": "O",
-        "type": "GENERATED"
-      },
-      {
-        "target": "N",
-        "type": "GENERATED"
-      },
-      {
-        "target": "B",
-        "type": "GENERATED"
-      }
-    ]
-  },
-  {
-    "name": "B",
-    "relations": [
-      {
-        "target": "C",
-        "type": "GENERATED"
-      },
-      {
-        "target": "I",
-        "type": "GENERATED"
-      },
-      {
-        "target": "M",
-        "type": "GENERATED"
-      },
-      {
-        "target": "A",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "C",
-    "relations": [
-      {
-        "target": "E",
-        "type": "BECAME"
-      },
-      {
-        "target": "B",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "D",
-    "relations": [
-      {
-        "target": "P",
-        "type": "COMPOSED"
-      },
-      {
-        "target": "I",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "E",
-    "relations": [
-      {
-        "target": "C",
-        "type": "CLONED"
-      }
-    ]
-  },
-  {
-    "name": "F",
-    "relations": [
-      {
-        "target": "H",
-        "type": "SUM_OF"
-      },
-      {
-        "target": "G",
-        "type": "SUM_OF"
-      }
-    ]
-  },
-  {
-    "name": "G",
-    "relations": [
-      {
-        "target": "F",
-        "type": "COMPOSED"
-      }
-    ]
-  },
-  {
-    "name": "H",
-    "relations": [
-      {
-        "target": "F",
-        "type": "COMPOSED"
-      }
-    ]
-  },
-  {
-    "name": "I",
-    "relations": [
-      {
-        "target": "D",
-        "type": "GENERATED"
-      },
-      {
-        "target": "J",
-        "type": "GENERATED"
-      },
-      {
-        "target": "B",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "J",
-    "relations": [
-      {
-        "target": "P",
-        "type": "COMPOSED"
-      },
-      {
-        "target": "I",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "K",
-    "relations": [
-      {
-        "target": "L",
-        "type": "BECAME"
-      }
-    ]
-  },
-  {
-    "name": "L",
-    "relations": [
-      {
-        "target": "K",
-        "type": "CLONED"
-      }
-    ]
-  },
-  {
-    "name": "M",
-    "relations": [
-      {
-        "target": "B",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "N",
-    "relations": [
-      {
-        "target": "A",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "O",
-    "relations": [
-      {
-        "target": "A",
-        "type": "CHILD_OF"
-      }
-    ]
-  },
-  {
-    "name": "P",
-    "relations": [
-      {
-        "target": "J",
-        "type": "CHILD_OF"
-      },
-      {
-        "target": "D",
-        "type": "CHILD_OF"
-      },
-      {
-        "target": "J",
-        "type": "SUM_OF"
-      },
-      {
-        "target": "D",
-        "type": "SUM_OF"
-      }
-    ]
-  }
-]
+{
+  "links": [
+    {
+      "source": 1,
+      "target": 0,
+      "type": "GENERATED"
+    },
+    {
+      "source": 2,
+      "target": 0,
+      "type": "GENERATED"
+    },
+    {
+      "source": 3,
+      "target": 0,
+      "type": "GENERATED"
+    },
+    {
+      "source": 5,
+      "target": 4,
+      "type": "GENERATED"
+    },
+    {
+      "source": 6,
+      "target": 4,
+      "type": "GENERATED"
+    },
+    {
+      "source": 7,
+      "target": 4,
+      "type": "GENERATED"
+    },
+    {
+      "source": 0,
+      "target": 4,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 9,
+      "target": 8,
+      "type": "BECAME"
+    },
+    {
+      "source": 3,
+      "target": 8,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 11,
+      "target": 10,
+      "type": "COMPOSED"
+    },
+    {
+      "source": 5,
+      "target": 10,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 4,
+      "target": 12,
+      "type": "CLONED"
+    },
+    {
+      "source": 14,
+      "target": 13,
+      "type": "SUM_OF"
+    },
+    {
+      "source": 15,
+      "target": 13,
+      "type": "SUM_OF"
+    },
+    {
+      "source": 10,
+      "target": 16,
+      "type": "COMPOSED"
+    },
+    {
+      "source": 10,
+      "target": 17,
+      "type": "COMPOSED"
+    },
+    {
+      "source": 8,
+      "target": 18,
+      "type": "GENERATED"
+    },
+    {
+      "source": 19,
+      "target": 18,
+      "type": "GENERATED"
+    },
+    {
+      "source": 3,
+      "target": 18,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 9,
+      "target": 20,
+      "type": "COMPOSED"
+    },
+    {
+      "source": 5,
+      "target": 20,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 22,
+      "target": 21,
+      "type": "BECAME"
+    },
+    {
+      "source": 14,
+      "target": 23,
+      "type": "CLONED"
+    },
+    {
+      "source": 3,
+      "target": 24,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 0,
+      "target": 25,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 0,
+      "target": 26,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 13,
+      "target": 27,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 8,
+      "target": 27,
+      "type": "CHILD_OF"
+    },
+    {
+      "source": 13,
+      "target": 27,
+      "type": "SUM_OF"
+    },
+    {
+      "source": 8,
+      "target": 27,
+      "type": "SUM_OF"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "A"
+    },
+    {
+      "name": "O"
+    },
+    {
+      "name": "N"
+    },
+    {
+      "name": "B"
+    },
+    {
+      "name": "C"
+    },
+    {
+      "name": "I"
+    },
+    {
+      "name": "M"
+    },
+    {
+      "name": "E"
+    },
+    {
+      "name": "D"
+    },
+    {
+      "name": "P"
+    },
+    {
+      "name": "F"
+    },
+    {
+      "name": "H"
+    },
+    {
+      "name": "G"
+    },
+    {
+      "name": "J"
+    },
+    {
+      "name": "K"
+    },
+    {
+      "name": "L"
+    }
+  ]
+}

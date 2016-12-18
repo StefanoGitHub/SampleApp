@@ -2,3 +2,18 @@
 
 #graph { margin: 0 auto; height: 100%; width: 90%;}
 
+.link {}
+.node {}
+.node.main {}
+.text {}
+.text.main {}
+
+.links line {
+    stroke: #999;
+    stroke-opacity: 0.6;
+}
+
+.nodes circle {
+    stroke: #fff;
+    stroke-width: 1px;
+}

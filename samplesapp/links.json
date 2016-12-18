@@ -1,0 +1,30 @@
+[
+  {
+    "source": {"name": "child2","target": [0]},
+    "target": {"name": "Parent"}
+  },
+  {
+    "source": {"name": "child3","target": [0]},
+    "target": {"name": "Parent"}
+  },
+  {
+    "source": {"name": "child4","target": [1]},
+    "target": {"name": "child1"}
+  },
+  {
+    "source": {"name": "child5","target": [0,1,2,3]},
+    "target": {"name": "Parent"}
+  },
+  {
+    "source": {"name": "child5","target": [0,1,2,3]},
+    "target": {"name": "child1"}
+  },
+  {
+    "source": {"name": "child5","target": [0,1,2,3]},
+    "target": {"name": "child2","target": [0]}
+  },
+  {
+    "source": {"name": "child5","target": [0,1,2,3]},
+    "target": {"name": "child3","target": [0]}
+  }
+]

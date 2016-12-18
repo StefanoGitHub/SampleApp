@@ -23,17 +23,51 @@ var $graph = $('#graph'),
         "yellowgreen": "#738A05"
     };
 
-var links = [];
-nodes.forEach(function(node, i) {
-    if (node.target !== undefined) {
-        node.target.forEach(function (tgt, x) {
-            links.push({
-                source: node,
-                target: nodes[node.target[x]]
-            });
-        });
-    }
-});
+var nodes = [
+    {name: "Parent"},
+    {name: "child1"},
+    {name: "child2", target: [0]},
+    {name: "child3", target: [0]},
+    {name: "child4", target: [1]},
+    {name: "child5", target: [0, 1, 2, 3]}
+];
+
+
+var links = [{
+        "source": {"name": "child2", "target": [0]},
+        "target": {"name": "Parent"}
+}, {
+    "source": {"name": "child3", "target": [0]},
+    "target": {"name": "Parent"}
+}, {
+    "source": {"name": "child4", "target": [1]},
+    "target": {"name": "child1"}
+}, {
+    "source": {"name": "child5", "target": [0, 1, 2, 3]},
+    "target": {"name": "Parent"}
+}, {
+    "source": {"name": "child5", "target": [0, 1, 2, 3]},
+    "target": {"name": "child1"}
+}, {
+    "source": {"name": "child5", "target": [0, 1, 2, 3]},
+    "target": {"name": "child2", "target": [0]}
+}, {
+    "source": {"name": "child5", "target": [0, 1, 2, 3]},
+    "target": {"name": "child3", "target": [0]}
+}];
+// var links = [];
+// nodes.forEach(function(node, i) {
+//     if (node.target !== undefined) {
+//         node.target.forEach(function (tgt, x) {
+//             links.push({
+//                 source: node,
+//                 target: nodes[node.target[x]]
+//             });
+//         });
+//     }
+// });
+
+debugger;
 
 // define drawing area
 var myChart = d3.select('#graph')
@@ -61,9 +95,12 @@ var node = myChart.selectAll('circle')
     .append('g')
     .call(force.drag);
 
+debugger;
+
 // draw nodes
 node.append('circle')
     .attr('cx', function (d) {
+        debugger;
         return d.x;
     })
     .attr('cy', function (d) {
@@ -71,6 +108,7 @@ node.append('circle')
     })
     .attr('r', circleWidth)
     .attr('fill', function (d, i) {
+        debugger;
         if (i > 0) {
             return palette.pink;
         }
@@ -82,6 +120,7 @@ node.append('circle')
 // draw labels
 node.append('text')
     .text(function (d) {
+        debugger;
         return d.name;
     })
     .attr('font-family', 'Roboto Slab')
@@ -117,11 +156,13 @@ node.append('text')
 force.on('tick', function (e) {
     // update nodes position
     node.attr('transform', function (d, i) {
+        debugger;
         return 'translate(' + d.x + ', ' + d.y + ')';
     });
     // update links position
     link
         .attr('x1', function (d) {
+            debugger;
             return d.source.x
         })
         .attr('y1', function (d) {
