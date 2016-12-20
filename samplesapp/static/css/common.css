@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:700|Exo+2:300,600);
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:700|Exo+2:300,400,500,600);
 
 /*body            { font-family: sans-serif; background: #eee; }*/
 /*a, h1, h3       { color: #377ba8; }*/
@@ -36,18 +36,19 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 body { font-family: "Exo 2", "Helvetica Neue", Helvetica, sans-serif; font-weight: 300;
-    font-size: 1em; line-height: 1.2em; background: lightyellow; color: #475B62; }
+    font-size: 1em; line-height: 1.2em; background: lightyellow; color: #475B62;}
 strong { font-weight: 600; }
 h1, h2, h3, h4, h5, h6 { font-family: 'Roboto Slab', "Helvetica Neue", Helvetica, sans-serif; font-weight: 700;
     color: #CB4B19; font-size: 1.75em; margin: 1.2em 0 1em; }
 p { margin-bottom: .5em; }
 
-.page { width: 90%; margin: 0 auto; min-height: 450px;}
+.page { width: 90%; margin: 0 auto; min-height: 600px;}
 
-.navbar { text-align: right; background: gold; }
-.navlinks { width: 90%; padding: 11px 0;}
+.navbar { text-align: right; background: gold; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0;}
+.navlinks { width: 90%; padding: 11px 0; font-weight: 500;}
 
-footer { margin: 2em 5% 1em; padding: 2em 0 1em; font-size: .7em; text-align: right;}
+footer { padding: 1em 5% 1em; font-size: .7em; text-align: right; border-top: 1px solid gold; width: 100%;}
+
 
 .flash { background: #cee5F5; padding: 0.5em; border: 1px solid #aacbe2; }
 .error { background: #f0d6d6; padding: 0.5em; }

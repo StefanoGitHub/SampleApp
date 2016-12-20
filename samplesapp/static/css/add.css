@@ -1,7 +1,9 @@
 /*body > div.page > form > div:nth-child(1) > div:nth-child(2) > label*/
 
 .space-buttom { margin-bottom: 25px; }
-#yeildBioHelp, #yieldNanoHelp { font-size: 80%; line-height: 1.5; display: block; margin-top: .3em; }
+small{ font-size: 80%; line-height: 1.5; display: block; margin-top: .3em; }
 label { padding: 0 0 0 3em !important; }
 
-form { padding-right: 3em; }
+form { padding-right: 3em; margin-bottom: 2.5em;}
+
+.input-group > span.input-group-addon { font-size: .7em;}

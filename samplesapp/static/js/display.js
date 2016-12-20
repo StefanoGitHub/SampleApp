@@ -3,7 +3,7 @@ var $graph = $('#graph'),
     docH = $(document).height(),
     width = $graph.width(),
     height = $graph.height(docH * .8).height(),
-    circleWidth = 10,
+    circleWidth = 20,
     palette = {
         "lightgray": "#819090",
         "gray": "#708284",
@@ -42,12 +42,17 @@ data.links.forEach(function(el) {
 
 //Set up the force layout
 var force = d3.layout.force()
-    // .charge(-120)
     .linkDistance(100)
-    // .gravity(.5)
-    .charge(-150)
+    // .gravity(.1)
+    .charge(-400)
+    .size([width, height])
+    .on("tick", tick);
 
-    .size([width, height]);
+var drag = force.drag()
+    .on("dragstart", dragstart);
+    // .on("drag", dragmove)
+    // .on("dragend", dragend);
+
 
 //Append a SVG to the body of the html page. Assign this SVG as an object to svg
 var svg = d3.select("#graph").append("svg")
@@ -63,27 +68,40 @@ force.nodes(data.nodes)
 var link = svg.selectAll(".link")
     .data(data.links)
     .enter().append("line")
-    .attr("class", "link")
-    .style("stroke-width", function (d) {
-        return Math.sqrt(d.value);
-    });
+    .attr("class", "link");
 
-//Do the same with the circles for the nodes - no
+//Do the same with the circles for the nodes
 var node = svg.selectAll(".node")
     .data(data.nodes)
-    .enter().append("circle")
-    .attr("class", "node")
-    .attr("r", circleWidth)
-    .style("fill", function (d) {
-        return color(d.group);
+    .enter().append("g")
+    .attr("class", function (d) {
+        return "node";
     })
-    .call(force.drag);
+    .on('click', onNodeClick)
+    .on("dblclick", dblclick)
+    .call(drag);
 
+node.append("circle")
+    .attr("r", circleWidth);
+// node.append("image")
+//     .attr("xlink:href", "https://github.com/favicon.ico")
+//     .attr("x", -8)
+//     .attr("y", -8)
+//     .attr("width", 16)
+//     .attr("height", 16);
+node.append("text")
+    .attr("dx", "-.3em")
+    .attr("dy", ".3em")
+    .text(function (d) {
+        return d.name; // define label
+    });
 
-// Now we are giving the SVGs co-ordinates - the force layout
+// $('body').on('click', resetNodes);
+
+//Now we are giving the SVGs co-ordinates - the force layout
 // is generating the co-ordinates which this code is using
 // to update the attributes of the SVG elements
-force.on("tick", function () {
+function tick() {
     link.attr("x1", function (d) {
         return d.source.x;
     })
@@ -96,11 +114,107 @@ force.on("tick", function () {
         .attr("y2", function (d) {
             return d.target.y;
         });
-
-    node.attr("cx", function (d) {
+    d3.selectAll("circle").attr("cx", function (d) {
         return d.x;
     })
         .attr("cy", function (d) {
             return d.y;
         });
+    d3.selectAll("text").attr("x", function (d) {
+        return d.x;
+    })
+        .attr("y", function (d) {
+            return d.y;
+        });
+}
+
+function dblclick(d) {
+    d3.select(this).classed("fixed", d.fixed = false);
+}
+
+function dragstart(d) {
+
+    // only left click
+    if (d3.event.sourceEvent.button == 0) {
+        // debugger;
+        d3.select(this).classed("fixed", d.fixed = true);
+    }
+    // right click
+    // if (d3.event.sourceEvent.button == 2) {
+    //     //debugger
+    //     d3.event.sourceEvent.preventDefault();
+    //     // d3.select(this).classed("fixed", d.fixed = false);
+    //     force.resume();
+    // }
+    // d3.event.sourceEvent
+    // $('.msg').html('Double-click on the p[inned node to realise it').show(500);
+    // setTimeout(function () {
+    //     $('.msg').hide(1000).html('');
+    // }, 4000);
+}
+
+
+function onNodeClick() {
+
+}
+
+/*
+ * Attach a context menu to a D3 element
+ */
+
+var contextMenuShowing = false;
+
+d3.select("body").on('contextmenu', function (d, i) {
+    if (contextMenuShowing) {
+        d3.event.preventDefault();
+        d3.select(".popup").remove();
+        contextMenuShowing = false;
+    } else {
+        if (d3.event.target.tagName == 'circle' ||
+            d3.event.target.tagName == 'text' ||
+            d3.event.target.tagName == 'g'
+        ) {
+            d3.event.preventDefault();
+            contextMenuShowing = true;
+            debugger
+            // var d = d3.select(d3.event.target).datum();
+
+            // Build the popup
+            var graph = d3.select("#graph");
+            var mousePosition = d3.mouse(graph.node());
+
+            var popup = graph.append("div")
+                .attr("class", "popup")
+                .style("left", mousePosition[0] + "px")
+                .style("top", mousePosition[1] + "px");
+            popup.append("h2").text(d.name);
+            // popup.append("p").text(
+            //     "The " + d.display_division + " division (wearing " + d.display_color + " uniforms) had " + d.casualties + " casualties during the show's original run.");
+            // popup.append("p")
+            //     .append("a")
+            //     .attr("href", d.link)
+            //     .text(d.link_text);
+
+            var canvasSize = [
+                graph.node().offsetWidth,
+                graph.node().offsetHeight
+            ];
+
+            var popupSize = [
+                popup.node().offsetWidth,
+                popup.node().offsetHeight
+            ];
+
+            if (popupSize[0] + mousePosition[0] > canvasSize[0]) {
+                popup.style("left", "auto");
+                popup.style("right", 0);
+            }
+
+            if (popupSize[1] + mousePosition[1] > canvasSize[1]) {
+                popup.style("top", "auto");
+                popup.style("bottom", 0);
+            }
+        }
+    }
 });
+
