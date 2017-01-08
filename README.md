@@ -40,6 +40,11 @@ python run.py
 
 ```
 
+If port `5000` is busy, kill the process:
+```
+lsof -ti:5000 | xargs kill
+```
+
 Data example + info
 [https://www.lucidchart.com/documents/edit/10285c27-5c46-4f74-8b81-aa0c926dd3f7?shared=true&](https://www.lucidchart.com/documents/edit/10285c27-5c46-4f74-8b81-aa0c926dd3f7?shared=true&)
 
