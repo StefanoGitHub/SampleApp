@@ -1,9 +1,8 @@
-// inspired by: http://bl.ocks.org/eyaler/10586116
 
 //adapt graph area to page
 var $graph = $('#graph'),
     docH = $(document).height(),
-    circleWidth = 20,
+    radius = 20,
     $details = $('#details-panel'),
 
     palette = {
@@ -28,13 +27,13 @@ var $graph = $('#graph'),
 var color = d3.scale.category20();
 
 // adapt links to D3 format
-data.links.forEach(function(el) {
+data.links.forEach(function (el) {
     var sourceId = el.source;
     var targetId = el.target;
-    var sourceNode = function(element){
+    var sourceNode = function (element) {
         return element.id == sourceId
     };
-    var targetNode = function(element){
+    var targetNode = function (element) {
         return element.id == targetId
     };
     el.source = data.nodes.findIndex(sourceNode);
@@ -42,13 +41,13 @@ data.links.forEach(function(el) {
 });
 
 var margin = {top: -5, right: -5, bottom: -5, left: -5},
-    width = $graph.width(),// - margin.left - margin.right,
-    height = $graph.height(docH * .8).height(); // - margin.top - margin.bottom;
+    width = $graph.width(),
+    height = $graph.height(docH * .8).height();
 
 //Set up the force layout
 var force = d3.layout.force()
     .linkDistance(130)
-    .gravity(.3)
+    .gravity(.4)
     // .friction(.05)
     // .linkStrength(1)
     .charge(-1000)
@@ -69,14 +68,12 @@ var drag = force.drag()
 var svg = d3.select("#graph").append("svg")
     .attr("width", width)
     .attr("height", height);
-    // .attr("width", width + margin.left + margin.right)
-    // .attr("height", height + margin.top + margin.bottom);
 var g = svg.append("g");
 
-    svg.call(zoom)
-        .on("dblclick.zoom", null);
+svg.call(zoom)
+    .on("dblclick.zoom", null);
 
-    resize();
+resize();
 
 //Creates the graph data structure out of the json data
 force.nodes(data.nodes)
@@ -101,49 +98,33 @@ var node = g.selectAll(".node")
     .on("contextmenu", nodeRightClick)
     .call(drag);
 
-node.append("circle")
-    .attr("r", circleWidth);
-    // node.append("image")
-    //     .attr("xlink:href", "https://github.com/favicon.ico")
-    //     .attr("x", -8)
-    //     .attr("y", -8)
-    //     .attr("width", 16)
-    //     .attr("height", 16);
-node.append("text")
+var circle = node.append("circle")
+    .attr("r", radius - .75);
+// node.append("image")
+//     .attr("xlink:href", "https://github.com/favicon.ico")
+//     .attr("x", -8)
+//     .attr("y", -8)
+//     .attr("width", 16)
+//     .attr("height", 16);
+var label = node.append("text")
     .attr("dx", "-.3em")
     .attr("dy", ".3em")
     .text(function (d) {
         return d.name; // define label
     });
 
-//Now we are giving the SVGs co-ordinates - the force layout
-// is generating the co-ordinates which this code is using
-// to update the attributes of the SVG elements
 function tick() {
-    link.attr("x1", function (d) {
-        return d.source.x;
-    })
-        .attr("y1", function (d) {
-            return d.source.y;
-        })
-        .attr("x2", function (d) {
-            return d.target.x;
-        })
-        .attr("y2", function (d) {
-            return d.target.y;
-        });
-    d3.selectAll("circle").attr("cx", function (d) {
-        return d.x;
-    })
-        .attr("cy", function (d) {
-            return d.y;
-        });
-    d3.selectAll("text").attr("x", function (d) {
-        return d.x;
-    })
-        .attr("y", function (d) {
-            return d.y;
-        });
+    circle.attr("cx", function (d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+        .attr("cy", function (d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+
+    label.attr("x", function (d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+        .attr("y", function (d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+
+    // link at last so their position is bound to circles
+    link.attr("x1", function (d) { return d.source.x; })
+        .attr("y1", function (d) { return d.source.y; })
+        .attr("x2", function (d) { return d.target.x; })
+        .attr("y2", function (d) { return d.target.y; });
 }
 
 function zoomed() {
@@ -186,7 +167,6 @@ function dragend(d) {
     // right click
     if (d3.event.sourceEvent.button == 2) {
         d3.event.sourceEvent.preventDefault();
-        d3.select(this).classed("fixed", d.fixed = true);
         populateInfoCol(d);
         showDetails(true);
     }
@@ -196,17 +176,26 @@ function nodeRightClick(d, i) {
     d3.event.preventDefault();
 }
 
-$('body').click(function (e) {
-    if (e.button == 0 &&
-        e.target.nodeName != 'circle' && e.target.nodeName != 'g' &&
-        e.target.nodeName != 'text' && e.target.nodeName != 'line' ) {
-        showDetails(false);
-    }
-});
-
-$details.click(function (e) {
-    e.stopPropagation();
-});
+var mousemoved = false;
+$graph.on("mousedown", function (e) {
+        mousemoved = false;
+    })
+    .on("mousemove", function (e) {
+        mousemoved = true;
+    })
+    .on("mouseup", function (e) {
+        if (mousemoved === false) {
+            // click
+            if (e.button == 0 && // right button
+                e.target.nodeName != 'circle' && e.target.nodeName != 'g' &&
+                e.target.nodeName != 'text' && e.target.nodeName != 'line') {
+                showDetails(false);
+            }
+        } else {
+            // drag
+        }
+        mousemoved = false;
+    });
 
 function populateInfoCol(d) {
     $details.find('#details-title').html(d.id);
@@ -220,74 +209,75 @@ function showDetails(show) {
     }
 }
 
+// inspired by: http://bl.ocks.org/eyaler/10586116
 function keydown() {
-    if (d3.event.keyCode == 32) {
-        force.stop();
-    }
-    else if (d3.event.keyCode >= 48 && d3.event.keyCode <= 90 && !d3.event.ctrlKey && !d3.event.altKey && !d3.event.metaKey) {
-        switch (String.fromCharCode(d3.event.keyCode)) {
-            case "C":
-                keyc = !keyc;
-                break;
-            case "S":
-                keys = !keys;
-                break;
-            case "T":
-                keyt = !keyt;
-                break;
-            case "R":
-                keyr = !keyr;
-                break;
-            case "X":
-                keyx = !keyx;
-                break;
-            case "D":
-                keyd = !keyd;
-                break;
-            case "L":
-                keyl = !keyl;
-                break;
-            case "M":
-                keym = !keym;
-                break;
-            case "H":
-                keyh = !keyh;
-                break;
-            case "1":
-                key1 = !key1;
-                break;
-            case "2":
-                key2 = !key2;
-                break;
-            case "3":
-                key3 = !key3;
-                break;
-            case "0":
-                key0 = !key0;
-                break;
-        }
-
-        link.style("display", function (d) {
-            var flag = vis_by_type(d.source.type) && vis_by_type(d.target.type) && vis_by_node_score(d.source.score) && vis_by_node_score(d.target.score) && vis_by_link_score(d.score);
-            linkedByIndex[d.source.index + "," + d.target.index] = flag;
-            return flag ? "inline" : "none";
-        });
-        node.style("display", function (d) {
-            return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
-        });
-        text.style("display", function (d) {
-            return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
-        });
-
-        if (highlight_node !== null) {
-            if ((key0 || hasConnections(highlight_node)) && vis_by_type(highlight_node.type) && vis_by_node_score(highlight_node.score)) {
-                if (focus_node !== null) set_focus(focus_node);
-                set_highlight(highlight_node);
-            }
-            else {
-                exit_highlight();
-            }
-        }
-
-    }
+    // if (d3.event.keyCode == 32) {
+    //     force.stop();
+    // }
+    // else if (d3.event.keyCode >= 48 && d3.event.keyCode <= 90 && !d3.event.ctrlKey && !d3.event.altKey && !d3.event.metaKey) {
+    //     switch (String.fromCharCode(d3.event.keyCode)) {
+    //         case "C":
+    //             keyc = !keyc;
+    //             break;
+    //         case "S":
+    //             keys = !keys;
+    //             break;
+    //         case "T":
+    //             keyt = !keyt;
+    //             break;
+    //         case "R":
+    //             keyr = !keyr;
+    //             break;
+    //         case "X":
+    //             keyx = !keyx;
+    //             break;
+    //         case "D":
+    //             keyd = !keyd;
+    //             break;
+    //         case "L":
+    //             keyl = !keyl;
+    //             break;
+    //         case "M":
+    //             keym = !keym;
+    //             break;
+    //         case "H":
+    //             keyh = !keyh;
+    //             break;
+    //         case "1":
+    //             key1 = !key1;
+    //             break;
+    //         case "2":
+    //             key2 = !key2;
+    //             break;
+    //         case "3":
+    //             key3 = !key3;
+    //             break;
+    //         case "0":
+    //             key0 = !key0;
+    //             break;
+    //     }
+    //
+    //     link.style("display", function (d) {
+    //         var flag = vis_by_type(d.source.type) && vis_by_type(d.target.type) && vis_by_node_score(d.source.score) && vis_by_node_score(d.target.score) && vis_by_link_score(d.score);
+    //         linkedByIndex[d.source.index + "," + d.target.index] = flag;
+    //         return flag ? "inline" : "none";
+    //     });
+    //     node.style("display", function (d) {
+    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
+    //     });
+    //     text.style("display", function (d) {
+    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
+    //     });
+    //
+    //     if (highlight_node !== null) {
+    //         if ((key0 || hasConnections(highlight_node)) && vis_by_type(highlight_node.type) && vis_by_node_score(highlight_node.score)) {
+    //             if (focus_node !== null) set_focus(focus_node);
+    //             set_highlight(highlight_node);
+    //         }
+    //         else {
+    //             exit_highlight();
+    //         }
+    //     }
+    //
+    // }
 }
