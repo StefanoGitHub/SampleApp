@@ -1,18 +1,26 @@
 {% extends "layouts/layout.html" %}
 
 {% block page %}
+    <link href="{{ url_for('static', filename='vendor/font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/display.css') }}" rel="stylesheet">
 
-    <h2>Samples</h2>
-    {#    <div class="msg-box">#}
-    {#        <div class="msg"></div>#}
-    {#    </div>#}
-    <div class="graph-box">
+    <div id="title-bar">
+        <h2>Samples</h2>
+        {#    <div class="msg-box">#}
+        {#        <div class="msg"></div>#}
+        {#    </div>#}
+        <a id="txt-btn" type="button" class="btn btn-default disabled" href="#">
+            <i class="fa fa-file-text-o" aria-hidden="true"></i>
+        </a>
+        <a id="pdf-btn" type="button" class="btn btn-default disabled" href="#">
+            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+        </a>
+    </div>
+
+    <div id="graph-box">
         <div id="graph" class="graph"></div>
 
-        <div id="details-panel" class="panel panel-primary" style="display: none;">
-            {% include "sampledetails.html" %}
-        </div>
+        {% include "sampledetails.html" %}
     </div>
     {#    <script type="text/javascript" src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>#}
     <script src="https://d3js.org/d3.v3.min.js"></script>

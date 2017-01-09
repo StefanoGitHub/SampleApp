@@ -3,7 +3,9 @@
 var $graph = $('#graph'),
     docH = $(document).height(),
     radius = 20,
-    $details = $('#details-panel'),
+    $details = $('#details-modal'),
+    $pdfBtn = $('#pdf-btn'),
+    $txtBtn = $('#txt-btn'),
 
     palette = {
         "lightgray": "#819090",
@@ -47,7 +49,7 @@ var margin = {top: -5, right: -5, bottom: -5, left: -5},
 //Set up the force layout
 var force = d3.layout.force()
     .linkDistance(130)
-    .gravity(.4)
+    .gravity(.2)
     // .friction(.05)
     // .linkStrength(1)
     .charge(-1000)
@@ -86,6 +88,12 @@ var link = g.selectAll(".link")
     .enter().append("line")
     .attr("class", "link");
 
+// relationship lables
+//http://bl.ocks.org/jhb/5955887
+
+// tooltip
+// https://bl.ocks.org/davidcdupuis/3f9db940e27e07961fdbaba9f20c79ec
+
 //Do the same with the circles for the nodes
 var node = g.selectAll(".node")
     .data(data.nodes)
@@ -97,6 +105,60 @@ var node = g.selectAll(".node")
     .on("dblclick", nodeDblclick)
     .on("contextmenu", nodeRightClick)
     .call(drag);
+
+// //MOUSEOVER
+// .
+// on("mouseover", function (d, i) {
+//     if (i > 0) {
+//         //CIRCLE
+//         d3.select(this).selectAll("circle")
+//             .transition()
+//             .duration(250)
+//             .style("cursor", "none")
+//             .attr("r", circleWidth + 3)
+//             .attr("fill", palette.orange);
+//
+//         //TEXT
+//         d3.select(this).select("text")
+//             .transition()
+//             .style("cursor", "none")
+//             .duration(250)
+//             .style("cursor", "none")
+//             .attr("font-size", "1.5em")
+//             .attr("x", 15)
+//             .attr("y", 5)
+//     } else {
+//         //CIRCLE
+//         d3.select(this).selectAll("circle")
+//             .style("cursor", "none")
+//
+//         //TEXT
+//         d3.select(this).select("text")
+//             .style("cursor", "none")
+//     }
+// })
+//
+// //MOUSEOUT
+//     .on("mouseout", function (d, i) {
+//         if (i > 0) {
+//             //CIRCLE
+//             d3.select(this).selectAll("circle")
+//                 .transition()
+//                 .duration(250)
+//                 .attr("r", circleWidth)
+//                 .attr("fill", palette.pink);
+//
+//             //TEXT
+//             d3.select(this).select("text")
+//                 .transition()
+//                 .duration(250)
+//                 .attr("font-size", "1em")
+//                 .attr("x", 8)
+//                 .attr("y", 4)
+//         }
+//     })
+//
+//     .call(force.drag);
 
 var circle = node.append("circle")
     .attr("r", radius - .75);
@@ -152,6 +214,10 @@ function resize() {
 
 function nodeDblclick(d) {
     d3.select(this).classed("fixed", d.fixed = false);
+    if (noNodeSelected()) {
+        $pdfBtn.addClass('disabled');
+        $txtBtn.addClass('disabled');
+    }
 }
 
 function dragstart(d) {
@@ -163,12 +229,14 @@ function dragend(d) {
     if (d3.event.sourceEvent.button == 0) {
         d3.event.sourceEvent.preventDefault();
         d3.select(this).classed("fixed", d.fixed = true);
+        $pdfBtn.removeClass('disabled');
+        $txtBtn.removeClass('disabled');
     }
     // right click
     if (d3.event.sourceEvent.button == 2) {
         d3.event.sourceEvent.preventDefault();
         populateInfoCol(d);
-        showDetails(true);
+        $details.modal('show');
     }
 }
 
@@ -176,37 +244,38 @@ function nodeRightClick(d, i) {
     d3.event.preventDefault();
 }
 
-var mousemoved = false;
-$graph.on("mousedown", function (e) {
-        mousemoved = false;
-    })
-    .on("mousemove", function (e) {
-        mousemoved = true;
-    })
-    .on("mouseup", function (e) {
-        if (mousemoved === false) {
-            // click
-            if (e.button == 0 && // right button
-                e.target.nodeName != 'circle' && e.target.nodeName != 'g' &&
-                e.target.nodeName != 'text' && e.target.nodeName != 'line') {
-                showDetails(false);
-            }
-        } else {
-            // drag
+function noNodeSelected() {
+    for (var i = 0; i < data.nodes.length; i++) {
+        if (data.nodes[i].fixed) {
+            return false;
         }
-        mousemoved = false;
-    });
+    }
+    return true;
+}
+
+// var mousemoved = false;
+// $graph.on("mousedown", function (e) {
+//         mousemoved = false;
+//     })
+//     .on("mousemove", function (e) {
+//         mousemoved = true;
+//     })
+//     .on("mouseup", function (e) {
+//         if (mousemoved === false) {
+//             // click
+//             if (e.button == 0 && // right button
+//                 e.target.nodeName != 'circle' && e.target.nodeName != 'g' &&
+//                 e.target.nodeName != 'text' && e.target.nodeName != 'line') {
+//                 // showDetails(false);
+//             }
+//         } else {
+//             // drag
+//         }
+//         mousemoved = false;
+//     });
 
 function populateInfoCol(d) {
     $details.find('#details-title').html(d.id);
-}
-
-function showDetails(show) {
-    if (show) {
-        $details.show();
-    } else {
-        $details.hide();
-    }
 }
 
 // inspired by: http://bl.ocks.org/eyaler/10586116
