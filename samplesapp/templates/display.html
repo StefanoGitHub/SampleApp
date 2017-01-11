@@ -1,7 +1,6 @@
 {% extends "layouts/layout.html" %}
 
 {% block page %}
-    <link href="{{ url_for('static', filename='vendor/font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/display.css') }}" rel="stylesheet">
 
     <div id="title-bar">
@@ -17,15 +16,23 @@
         </a>
     </div>
 
-    <div id="graph-box">
+    <div class="content">
         <div id="graph" class="graph"></div>
 
-        {% include "sampledetails.html" %}
+        {% include "filtercolumn.html" %}
     </div>
+
+    {% include "sampledetails.html" %}
     {#    <script type="text/javascript" src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>#}
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript">var data = {{ nodes|tojson }};</script>
+    <script type="text/javascript">
+        var data = {{ nodes|tojson }},
+            iconLink = "{{ url_for('static', filename='images/tube.png') }}"
+        ;
+
+    </script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/display.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/filter.js') }}"></script>
 
 {% endblock page %}

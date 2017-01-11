@@ -1,83 +1,55 @@
-{#<div id="details-panel" class="panel panel-default" style="display: none;">#}
-{#    <div class="panel-heading">#}
-{#        <h3 id="details-title" class="panel-title">Panel title</h3>#}
 {#        <a id="lineage-btn" type="button" class="btn btn-default" href="#">#}
 {#            <i class="fa fa-code-fork" aria-hidden="true"></i> Lineage#}
 {#        </a>#}
-{#    </div>#}
-{#    <div class="panel-body">#}
-{##}
-{#        <p id="_id"><span class="bold">ID:</span> <span class="content">ID:</span></p>#}
-{#        <p id="name"><span class="bold">Name:</span> <span class="content">name</span></p>#}
-{#        <p id="creator"><span class="bold">Creator:</span> <span class="content">creator</span></p>#}
-{#        <p id="parent"><span class="bold">Source:</span> <span class="content">parent</span></p>#}
-{#        <p id="isolMethod"><span class="bold">Method:</span> <span class="content">isolmethod</span></p>#}
-{#        <p id="creationDate"><span class="bold">Creation date:</span> <span class="content">creationdate</span></p>#}
-{#        <p id="added"><span class="bold">Saving date:</span> <span class="content">added</span></p>#}
-{#        <p id="volume"><span class="bold">Volume:</span> <span class="content">volume</span> <span class="unit">&micro;L</span></p>#}
-{#        <p id="dilution"><span class="bold">Dilution:</span> <span class="content">dilution</span> <span class="unit"></span></p>#}
-{#        <p id="details"><span class="bold">Details:</span> <span class="content">details</span> <span class="unit"></span></p>#}
-{#        <p id="rin"><span class="bold">RIN:</span> <span class="content">rin</span> <span class="unit"></span></p>#}
-{#        <p id="concBio"><span class="bold">Bioanalyzer concentration:</span> <span class="content">concbio</span> <span class="unit">ng/&micro;L</span></p>#}
-{#        <p id="corrConcBio"><span class="bold">Corrected concentration:</span> <span class="content">corrconcbio</span> <span class="unit">pg/&micro;L</span></p>#}
-{#        <p id="yieldBio"><span class="bold">Yield Bioanalyzer:</span> <span class="content">yieldbio</span> <span class="unit"></span></p>#}
-{#        <p id="concNano"><span class="bold">NanoDrop concentration:</span> <span class="content">concnano</span> <span class="unit">pg/&micro;L</span></p>#}
-{#        <p id="yieldNano"><span class="bold">Yield NanoDrop:</span> <span class="content">yieldnano</span> <span class="unit">ng</span></p>#}
-{#        <p id="a280"><span class="bold">A260/280:</span> <span class="content">a280</span></p>#}
-{#        <p id="a230"><span class="bold">A260/230:</span> <span class="content">a230</span></p>#}
-{#        <p id="errors"><span class="bold">Errors:</span> <span class="content">errors</span></p>#}
-{#        <p id="notes"><span class="bold">Notes:</span> <span class="content">notes</span></p>#}
-{##}
-{#    </div>#}
-{#</div>#}
 
-    <!-- Modal -->
-    <div class="modal" id="details-modal" role="dialog">
-        <div class="modal-dialog">
+<!-- Modal -->
+<div class="modal" id="details-modal" role="dialog">
+    <div class="modal-dialog">
 
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 id="details-title" class="modal-title">Modal Header</h3>
-                </div>
-                <div id="details-body" class="modal-body">
-                    <p id="_id"><span class="bold">ID:</span> <span class="content">ID:</span></p>
-                    <p id="name"><span class="bold">Name:</span> <span class="content">name</span></p>
-                    <p id="creator"><span class="bold">Creator:</span> <span class="content">creator</span></p>
-                    <p id="parent"><span class="bold">Source:</span> <span class="content">parent</span></p>
-                    <p id="isolMethod"><span class="bold">Method:</span> <span class="content">isolmethod</span></p>
-                    <p id="creationDate"><span class="bold">Creation date:</span> <span
-                            class="content">creationdate</span></p>
-                    <p id="added"><span class="bold">Saving date:</span> <span class="content">added</span></p>
-                    <p id="volume"><span class="bold">Volume:</span> <span class="content">volume</span> <span
-                            class="unit">&micro;L</span></p>
-                    <p id="dilution"><span class="bold">Dilution:</span> <span class="content">dilution</span> <span
-                            class="unit"></span></p>
-                    <p id="details"><span class="bold">Details:</span> <span class="content">details</span> <span
-                            class="unit"></span></p>
-                    <p id="rin"><span class="bold">RIN:</span> <span class="content">rin</span> <span
-                            class="unit"></span></p>
-                    <p id="concBio"><span class="bold">Bioanalyzer concentration:</span> <span
-                            class="content">concbio</span> <span class="unit">ng/&micro;L</span></p>
-                    <p id="corrConcBio"><span class="bold">Corrected concentration:</span> <span class="content">corrconcbio</span>
-                        <span class="unit">pg/&micro;L</span></p>
-                    <p id="yieldBio"><span class="bold">Yield Bioanalyzer:</span> <span class="content">yieldbio</span>
-                        <span class="unit"></span></p>
-                    <p id="concNano"><span class="bold">NanoDrop concentration:</span> <span
-                            class="content">concnano</span> <span class="unit">pg/&micro;L</span></p>
-                    <p id="yieldNano"><span class="bold">Yield NanoDrop:</span> <span class="content">yieldnano</span>
-                        <span class="unit">ng</span></p>
-                    <p id="a280"><span class="bold">A260/280:</span> <span class="content">a280</span></p>
-                    <p id="a230"><span class="bold">A260/230:</span> <span class="content">a230</span></p>
-                    <p id="errors"><span class="bold">Errors:</span> <span class="content">errors</span></p>
-                    <p id="notes"><span class="bold">Notes:</span> <span class="content">notes</span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 id="details-title" class="modal-title">Modal Header</h3>
             </div>
-
+            <div id="details-body" class="modal-body">
+                <p id="_id"><span class="bold">ID:</span> <span class="content">ID:</span></p>
+                <p id="name"><span class="bold">Name:</span> <span class="content">name</span></p>
+                <p id="creator"><span class="bold">Creator:</span> <span class="content">creator</span></p>
+                <p id="parent"><span class="bold">Source:</span> <span class="content">parent</span></p>
+                <p id="isolMethod"><span class="bold">Method:</span> <span class="content">isolmethod</span></p>
+                <p id="creationDate"><span class="bold">Creation date:</span> <span
+                        class="content">creationdate</span></p>
+                <p id="added"><span class="bold">Saving date:</span> <span class="content">added</span></p>
+                <p id="volume"><span class="bold">Volume:</span> <span class="content">volume</span> <span
+                        class="unit">&micro;L</span></p>
+                <p id="dilution"><span class="bold">Dilution:</span> <span class="content">dilution</span> <span
+                        class="unit"></span></p>
+                <p id="details"><span class="bold">Details:</span> <span class="content">details</span> <span
+                        class="unit"></span></p>
+                <p id="rin"><span class="bold">RIN:</span> <span class="content">rin</span> <span
+                        class="unit"></span></p>
+                <p id="concBio"><span class="bold">Bioanalyzer concentration:</span> <span
+                        class="content">concbio</span> <span class="unit">ng/&micro;L</span></p>
+                <p id="corrConcBio"><span class="bold">Corrected concentration:</span> <span
+                        class="content">corrconcbio</span>
+                    <span class="unit">pg/&micro;L</span></p>
+                <p id="yieldBio"><span class="bold">Yield Bioanalyzer:</span> <span class="content">yieldbio</span>
+                    <span class="unit"></span></p>
+                <p id="concNano"><span class="bold">NanoDrop concentration:</span> <span
+                        class="content">concnano</span> <span class="unit">pg/&micro;L</span></p>
+                <p id="yieldNano"><span class="bold">Yield NanoDrop:</span> <span class="content">yieldnano</span>
+                    <span class="unit">ng</span></p>
+                <p id="a280"><span class="bold">A260/280:</span> <span class="content">a280</span></p>
+                <p id="a230"><span class="bold">A260/230:</span> <span class="content">a230</span></p>
+                <p id="errors"><span class="bold">Errors:</span> <span class="content">errors</span></p>
+                <p id="notes"><span class="bold">Notes:</span> <span class="content">notes</span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
+
     </div>
+</div>
 

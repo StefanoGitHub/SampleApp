@@ -7,3 +7,9 @@ label { padding: 0 0 0 3em !important; }
 form { padding-right: 3em; margin-bottom: 2.5em; min-width: 880px;}
 
 .input-group > span.input-group-addon { font-size: .7em;}
+
+#add-btn { margin-right: 2em; margin-top: 1em;}
+
+.btn-box { text-align: right;  }
+
+
