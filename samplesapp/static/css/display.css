@@ -1,5 +1,5 @@
 
-.content { width: 100%; display: inline-block; min-height: 680px}
+.page-content { width: 100%; display: inline-block; min-height: 680px}
 #graph { width: 69.5%;  border: 1px solid #d3d3d3; float: left; }
 
 .node { stroke: darkgrey; stroke-width: 1px; fill: lightgrey; cursor: move; }
@@ -17,6 +17,10 @@
 h2 { display: inline-block; }
 #pdf-btn, #txt-btn { margin: 2.1em 0 0 .5em; float: right; }
 
+#details-modal { font-size: .9em; }
+#details-modal p { margin-bottom: .1em; }
+#details-modal .bold { font-weight: bold; }
+
 .modal-content { background: lightyellow; margin-top: 100px; }
 .modal-header { background: gold; }
 
@@ -31,16 +35,16 @@ h2 { display: inline-block; }
 
 #filter-select { display: inline-block; }
 #filter-box { height: 100%; width: 29.5%; padding-left: 2em; float: left; }
-#filter-select { float: left;}
-#add-field-btn { margin-left: .5em; }
 
-.fields { margin: .5em 0;}
-.fields .input-group { margin-bottom: 0;}
+.fields { margin: .7em 0; }
+.fields .input-group { margin-bottom: 15px;}
 
-.fields .form-group { display: flex;}
+.fields .form-group { display: flex; }
+.fields .form-control { font-size: .9em;}
 .fields .form-group.no-unit input{ height: 30px;}
 
 .field { display:block; margin: .5em 0;}
 .field button { float: left; margin-right: .5em; position: relative; top: 4px; }
 
+#filter-btn {  }
 

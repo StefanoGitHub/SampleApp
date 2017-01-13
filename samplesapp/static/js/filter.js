@@ -6,7 +6,7 @@ var fieldTpl = function(name, unit, id) {
                 '<i class="fa fa-minus"></i>' +
             '</button>' +
             '<div class="input-group input-group-sm">' +
-                '<input class="form-control" placeholder="'+ name +'" id="yieldNano">' +
+                '<input class="form-control" placeholder="'+ name +'..." id="yieldNano">' +
                 '<span class="input-group-addon">' + unit + '</span>' +
             '</div>' +
         '</div>';
@@ -25,11 +25,10 @@ var fieldTplNoUnit = function(name, id) {
 
 var fields = 0;
 var $filterBtn = $('#filter-btn');
-var $addFieldBtn = $('#add-field-btn');
 var $fields = $('.fields');
 var $filterSelect = $('#filter-select');
 
-$addFieldBtn.on('click', function (e) {
+$filterSelect.on('change', function (e) {
     var name = $filterSelect.val();
 
     if (!name) {

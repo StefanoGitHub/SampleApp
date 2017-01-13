@@ -16,7 +16,7 @@
         </a>
     </div>
 
-    <div class="content">
+    <div class="page-content">
         <div id="graph" class="graph"></div>
 
         {% include "filtercolumn.html" %}
@@ -29,7 +29,6 @@
         var data = {{ nodes|tojson }},
             iconLink = "{{ url_for('static', filename='images/tube.png') }}"
         ;
-
     </script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/display.js') }}"></script>

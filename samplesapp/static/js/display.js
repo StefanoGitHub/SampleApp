@@ -12,8 +12,8 @@ var $graph = $('#graph'),
     // margin = {top: -5, right: -5, bottom: -5, left: -5},
     svgWidth = $graph.width(),
     svgHeight = $graph.height(docH * .8).height()
-
 ;
+
 
 // -----------------------------
 // adapt links data to D3 format
@@ -101,24 +101,33 @@ var image = node.append("image")
     .attr("height", iconSide);
 
 
+var mouseDown = false;
+
 node    // .on('click', onNodeClick)
     .on("dblclick", nodeDblclick)
     .on("contextmenu", nodeRightClick)
+    // track mouse button
+    // mainly to avoid wrong behaviour on mouseover/out
+    .on("mousedown", function (d, i) { mouseDown = true; })
+    .on("mouseup", function (d, i) { mouseDown = false; })
     .on("mouseover", function (d, i) {
-        d3.select(this).classed("fixed", d.fixed = true);
-        d3.select(this).selectAll("circle")
+        if (!mouseDown) {
+            // debugger;
+            d3.select(this).classed("fixed", d.fixed = true);
+            d3.select(this).selectAll("circle")
                 .transition()
                 .duration(50)
                 .attr("r", radius + 5);
+        }
     })
     .on("mouseout", function (d, i) {
-            if (!d.selected) {
-                d3.select(this).classed("fixed", d.fixed = false);
-                d3.select(this).selectAll("circle")
-                    .transition()
-                    .duration(50)
-                    .attr("r", radius);
-            }
+        if (!d.selected && !mouseDown) {
+            d3.select(this).classed("fixed", d.fixed = false);
+            d3.select(this).selectAll("circle")
+                .transition()
+                .duration(50)
+                .attr("r", radius);
+        }
     })
     .call(drag);
 
@@ -128,20 +137,22 @@ force.nodes(data.nodes)
     .links(data.links)
     .start();
 
+
+// RESIZE FUNCTIONS
+// ----------------
+$(window).on("resize", resize); //.on("keydown", keydown);
 resize();
-
-
 
 
 //
 function tick() {
-    circle.attr("cx", function (d) { return d.x = Math.max(radius, Math.min(svgWidth - radius, d.x)); })
-        .attr("cy", function (d) { return d.y = Math.max(radius, Math.min(svgHeight - radius, d.y)); });
+    circle.attr("cx", function (d) { return d.x ; })
+        .attr("cy", function (d) { return d.y ; });
 
     label.attr("x", function (d) { return d.x + radius })
         .attr("y", function (d) { return d.y });
 
-    image.attr("x", function (d) { return d.x - iconSide / 2; })
+    image.attr("x", function (d) { return d.x  - iconSide / 2; })
         .attr("y", function (d) { return d.y - iconSide / 2; });
 
     // link at last so their position is bound to circles
@@ -291,6 +302,22 @@ function keydown() {
     // }
 }
 
+function resize() {
+    var w = $graph.width(),
+        h = $graph.height(docH * .8).height(),
+        delW = w - svgWidth,
+        delH = h - svgHeight;
+
+    svg.attr("width", w).attr("height", h);
+    force.size([
+        force.size()[0] + delW / zoom.scale(),
+        force.size()[1] + delH / zoom.scale()
+    ]).resume();
+
+    svgWidth = w;
+    svgHeight = h;
+}
+
 // var mousemoved = false;
 // $graph.on("mousedown", function (e) {
 //         mousemoved = false;
@@ -330,25 +357,4 @@ function keydown() {
 //     "green": "#259286",
 //     "yellowgreen": "#738A05"
 // };
-
-// RESIZE FUNCTIONS
-// ----------------
-d3.select(window)
-    .on("resize", resize); //.on("keydown", keydown);
-
-function resize() {
-    var w = $graph.width(),
-        h = $graph.height(docH * .8).height(),
-        delW = w - svgWidth,
-        delH = h - svgHeight;
-
-    svg.attr("width", w).attr("height", h);
-    force.size([
-        force.size()[0] + delW / zoom.scale(),
-        force.size()[1] + delH / zoom.scale()
-    ]).resume();
-
-    svgWidth = w;
-    svgHeight = h;
-}
 
