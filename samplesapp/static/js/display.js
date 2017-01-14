@@ -1,3 +1,6 @@
+// very useful doc
+// https://leanpub.com/D3-Tips-and-Tricks/read#leanpub-auto-transform-translatexy-scalek-rotatea
+
 
 //adapt graph area to page
 var $graph = $('#graph'),
@@ -72,11 +75,18 @@ var g = svg.append("g");
 // add link lines
 var link = g.selectAll(".link")
     .data(data.links)
-    .enter().append("line")
-    .attr("class", "link");
+    .enter().append("g")
+    .attr("class", "link")
+    .append("line")
+    .attr("class", "link-line")
+    .attr("marker-end", "url("+ window.location +"#Triangle)");
 
-// relationship lables
-//http://bl.ocks.org/jhb/5955887
+var linkLable = g.selectAll(".link")
+    .append("text")
+    .attr("class", "link-label")
+    .attr("dy", "-.2em")
+    .attr("text-anchor", "middle")
+    .text(function (d) { return d.type; });
 
 // tooltip
 // https://bl.ocks.org/davidcdupuis/3f9db940e27e07961fdbaba9f20c79ec
@@ -92,7 +102,8 @@ var circle = node.append("circle")
     .attr("r", radius - .75);
 
 // add labels
-var label = node.append("text")
+var nodeLabel = node.append("text")
+    .attr("class", "node-label")
     .text(function (d) { return d.name; });
 
 var image = node.append("image")
@@ -149,7 +160,7 @@ function tick() {
     circle.attr("cx", function (d) { return d.x ; })
         .attr("cy", function (d) { return d.y ; });
 
-    label.attr("x", function (d) { return d.x + radius })
+    nodeLabel.attr("x", function (d) { return d.x + radius })
         .attr("y", function (d) { return d.y });
 
     image.attr("x", function (d) { return d.x  - iconSide / 2; })
@@ -160,6 +171,26 @@ function tick() {
         .attr("y1", function (d) { return d.source.y; })
         .attr("x2", function (d) { return d.target.x; })
         .attr("y2", function (d) { return d.target.y; });
+
+    linkLable
+        .attr('transform', function (d) {
+            var a = d.source.x - d.target.x;
+            var b = d.source.y - d.target.y;
+            var alpha = Math.atan(b/a) * (180 / Math.PI);
+            var midX = (d.source.x + d.target.x) / 2;
+            var midY = (d.source.y + d.target.y) / 2;
+            return "translate(" + midX + "," + midY + ") rotate(" + alpha + ")";
+        });
+}
+
+function arcPath(leftHand, d) {
+    var start = leftHand ? d.source : d.target,
+        end = leftHand ? d.target : d.source,
+        dx = end.x - start.x,
+        dy = end.y - start.y,
+        dr = Math.sqrt(dx * dx + dy * dy),
+        sweep = leftHand ? 0 : 1;
+    return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
 }
 
 function zoomed() {

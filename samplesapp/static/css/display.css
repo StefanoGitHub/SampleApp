@@ -5,10 +5,12 @@
 .node { stroke: darkgrey; stroke-width: 1px; fill: lightgrey; cursor: move; }
 .node.selected { fill: #fff3b1; stroke: gold; stroke-width: 2px;}
 
-.node text { font-family: 'Source Code Pro', Menlo, Consolas, Monaco, monospace; font-size: 1.2em;
+.node-label { font-family: 'Source Code Pro', Menlo, Consolas, Monaco, monospace; font-size: 1.2em;
              fill: black; color:black; stroke: black; stroke-width: 1px;}
 
 .link { stroke: #536870; stroke-opacity: .6; }
+.link-label { stroke: #2f434a; fill: #2f434a; stroke-opacity: 1; fill-opacity: 1; font-size: .8em;}
+/*.link-line { marker-end: url("#arrow")}*/
 
 /*.msg-box { background: #cee5F5; fill-opacity: 0.8; padding: 0.5em; border: 1px solid #869eb5;*/
     /*-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; z-index: 1; position: relative;}*/
