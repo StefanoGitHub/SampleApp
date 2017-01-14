@@ -45,16 +45,16 @@ var force = d3.layout.force()
     // .linkStrength(1)
     .charge(-1000)
     .size([svgWidth, svgHeight])
-    .on("tick", tick);
+    .on('tick', tick);
 
 var zoom = d3.behavior.zoom()
     .scaleExtent([0.2, 5])
-    .on("zoom", zoomed);
+    .on('zoom', zoomed);
 
 var drag = force.drag()
-    .on("dragstart", dragstart)
-    // .on("drag", dragmove)
-    .on("dragend", dragend);
+    .on('dragstart', dragstart)
+    // .on('drag', dragmove)
+    .on('dragend', dragend);
 
 
 // ---------------------------------------
@@ -63,81 +63,100 @@ var drag = force.drag()
 // ---------------------------------------
 
 // append a SVG to #graph of the html page
-var svg = d3.select("#graph").append("svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight);
+var svg = d3.select('#graph').append('svg')
+    .attr('width', svgWidth)
+    .attr('height', svgHeight);
     svg.call(zoom)
-    .on("dblclick.zoom", null);
+    .on('dblclick.zoom', null);
+
+// create arrow head
+svg.append('marker')
+    .attr({
+        'id': 'arrow',
+        'class': 'arrow',
+        'viewBox': '-0 -5 10 10',
+        'refX': 30,
+        'refY': 0,
+        'orient': 'auto',
+        'markerWidth': 10,
+        'markerHeight': 10,
+        'xoverflow': 'visible'
+    })
+    .append('svg:path')
+        .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+        // Force style as CSS doesn't work
+        .attr('fill', 'darkgrey')
+        .attr('stroke', 'darkgrey');
 
 // create a g(roup) tag container for each node
-var g = svg.append("g");
+var g = svg.append('g');
 
 // add link lines
-var link = g.selectAll(".link")
+var link = g.selectAll('.link')
     .data(data.links)
-    .enter().append("g")
-    .attr("class", "link")
-    .append("line")
-    .attr("class", "link-line")
-    .attr("marker-end", "url("+ window.location +"#Triangle)");
+    .enter().append('g')
+    .attr('class', 'link')
+    .append('line')
+    .attr('class', 'link-line')
+    .attr('marker-end', 'url(#arrow)'); // append arrow head
 
-var linkLable = g.selectAll(".link")
-    .append("text")
-    .attr("class", "link-label")
-    .attr("dy", "-.2em")
-    .attr("text-anchor", "middle")
+var linkLable = g.selectAll('.link')
+    .append('text')
+    .attr('class', 'link-label')
+    .attr('dy', '-.2em')
+    .attr('text-anchor', 'middle')
     .text(function (d) { return d.type; });
 
 // tooltip
 // https://bl.ocks.org/davidcdupuis/3f9db940e27e07961fdbaba9f20c79ec
 
 // create nodes
-var node = g.selectAll(".node")
+var node = g.selectAll('.node')
     .data(data.nodes)
-    .enter().append("g")
-    .attr("class", "node" );
+    .enter().append('g')
+    .attr('class', 'node' );
 
 // add circles
-var circle = node.append("circle")
-    .attr("r", radius - .75);
+var circle = node.append('circle')
+    .attr('r', radius);
 
 // add labels
-var nodeLabel = node.append("text")
-    .attr("class", "node-label")
+var nodeLabel = node.append('text')
+    .attr('class', 'node-label')
     .text(function (d) { return d.name; });
 
-var image = node.append("image")
-    .attr("xlink:href", iconLink)
-    .attr("width", iconSide)
-    .attr("height", iconSide);
+var image = node.append('image')
+    .attr('xlink:href', iconLink)
+    .attr('width', iconSide)
+    .attr('height', iconSide);
 
 
 var mouseDown = false;
 
 node    // .on('click', onNodeClick)
-    .on("dblclick", nodeDblclick)
-    .on("contextmenu", nodeRightClick)
+    .on('dblclick', nodeDblclick)
+    .on('contextmenu', nodeRightClick)
     // track mouse button
     // mainly to avoid wrong behaviour on mouseover/out
-    .on("mousedown", function (d, i) { mouseDown = true; })
-    .on("mouseup", function (d, i) { mouseDown = false; })
-    .on("mouseover", function (d, i) {
+    .on('mousedown', function (d, i) { mouseDown = true; })
+    .on('mouseup', function (d, i) { mouseDown = false; })
+    .on('mouseover', function (d, i) {
         if (!mouseDown) {
             // debugger;
-            d3.select(this).classed("fixed", d.fixed = true);
-            d3.select(this).selectAll("circle")
+            d3.select(this).classed('fixed', d.fixed = true);
+            d3.select(this).selectAll('circle')
                 .transition()
                 .duration(50)
-                .attr("r", radius + 5);
+                .attr('r', radius + 5);
         }
     })
-    .on("mouseout", function (d, i) {
+    .on('mouseout', function (d, i) {
         if (!d.selected && !mouseDown) {
-            d3.select(this).classed("fixed", d.fixed = false);
-            d3.select(this).selectAll("circle")
+            d3.select(this).classed('fixed', d.fixed = false);
+            d3.select(this).selectAll('circle')
                 .transition()
                 .duration(50)
-                .attr("r", radius);
+                .attr('r', radius);
         }
     })
     .call(drag);
@@ -151,26 +170,26 @@ force.nodes(data.nodes)
 
 // RESIZE FUNCTIONS
 // ----------------
-$(window).on("resize", resize); //.on("keydown", keydown);
+$(window).on('resize', resize); //.on('keydown', keydown);
 resize();
 
 
 //
 function tick() {
-    circle.attr("cx", function (d) { return d.x ; })
-        .attr("cy", function (d) { return d.y ; });
+    circle.attr('cx', function (d) { return d.x ; })
+        .attr('cy', function (d) { return d.y ; });
 
-    nodeLabel.attr("x", function (d) { return d.x + radius })
-        .attr("y", function (d) { return d.y });
+    nodeLabel.attr('x', function (d) { return d.x + radius })
+        .attr('y', function (d) { return d.y });
 
-    image.attr("x", function (d) { return d.x  - iconSide / 2; })
-        .attr("y", function (d) { return d.y - iconSide / 2; });
+    image.attr('x', function (d) { return d.x  - iconSide / 2; })
+        .attr('y', function (d) { return d.y - iconSide / 2; });
 
     // link at last so their position is bound to circles
-    link.attr("x1", function (d) { return d.source.x; })
-        .attr("y1", function (d) { return d.source.y; })
-        .attr("x2", function (d) { return d.target.x; })
-        .attr("y2", function (d) { return d.target.y; });
+    link.attr('x1', function (d) { return d.source.x; })
+        .attr('y1', function (d) { return d.source.y; })
+        .attr('x2', function (d) { return d.target.x; })
+        .attr('y2', function (d) { return d.target.y; });
 
     linkLable
         .attr('transform', function (d) {
@@ -179,7 +198,7 @@ function tick() {
             var alpha = Math.atan(b/a) * (180 / Math.PI);
             var midX = (d.source.x + d.target.x) / 2;
             var midY = (d.source.y + d.target.y) / 2;
-            return "translate(" + midX + "," + midY + ") rotate(" + alpha + ")";
+            return 'translate(' + midX + ',' + midY + ') rotate(' + alpha + ')';
         });
 }
 
@@ -190,12 +209,12 @@ function arcPath(leftHand, d) {
         dy = end.y - start.y,
         dr = Math.sqrt(dx * dx + dy * dy),
         sweep = leftHand ? 0 : 1;
-    return "M" + start.x + "," + start.y + "A" + dr + "," + dr + " 0 0," + sweep + " " + end.x + "," + end.y;
+    return 'M' + start.x + ',' + start.y + 'A' + dr + ',' + dr + ' 0 0,' + sweep + ' ' + end.x + ',' + end.y;
 }
 
 function zoomed() {
     // add drag and zoom to g
-    g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
 }
 
 
@@ -203,10 +222,10 @@ function zoomed() {
 // NODES METHODS
 // -------------
 function nodeDblclick(d) {
-    d3.select(this).classed("fixed", d.fixed = false);
-    d3.select(this).classed("selected", d.selected = false);
-    d3.select(this).selectAll("circle")
-        .attr("r", radius);
+    d3.select(this).classed('fixed', d.fixed = false);
+    d3.select(this).classed('selected', d.selected = false);
+    d3.select(this).selectAll('circle')
+        .attr('r', radius);
 
     if (noNodeSelected()) {
         $pdfBtn.addClass('disabled');
@@ -230,10 +249,10 @@ function dragend(d) {
     // left click
     if (d3.event.sourceEvent.button == 0) {
         d3.event.sourceEvent.preventDefault();
-        d3.select(this).classed("fixed", d.fixed = true);
-        d3.select(this).classed("selected", d.selected = true);
-        d3.select(this).selectAll("circle")
-            .attr("r", radius + 5);
+        d3.select(this).classed('fixed', d.fixed = true);
+        d3.select(this).classed('selected', d.selected = true);
+        d3.select(this).selectAll('circle')
+            .attr('r', radius + 5);
 
         $pdfBtn.removeClass('disabled');
         $txtBtn.removeClass('disabled');
@@ -267,57 +286,57 @@ function keydown() {
     // }
     // else if (d3.event.keyCode >= 48 && d3.event.keyCode <= 90 && !d3.event.ctrlKey && !d3.event.altKey && !d3.event.metaKey) {
     //     switch (String.fromCharCode(d3.event.keyCode)) {
-    //         case "C":
+    //         case 'C':
     //             keyc = !keyc;
     //             break;
-    //         case "S":
+    //         case 'S':
     //             keys = !keys;
     //             break;
-    //         case "T":
+    //         case 'T':
     //             keyt = !keyt;
     //             break;
-    //         case "R":
+    //         case 'R':
     //             keyr = !keyr;
     //             break;
-    //         case "X":
+    //         case 'X':
     //             keyx = !keyx;
     //             break;
-    //         case "D":
+    //         case 'D':
     //             keyd = !keyd;
     //             break;
-    //         case "L":
+    //         case 'L':
     //             keyl = !keyl;
     //             break;
-    //         case "M":
+    //         case 'M':
     //             keym = !keym;
     //             break;
-    //         case "H":
+    //         case 'H':
     //             keyh = !keyh;
     //             break;
-    //         case "1":
+    //         case '1':
     //             key1 = !key1;
     //             break;
-    //         case "2":
+    //         case '2':
     //             key2 = !key2;
     //             break;
-    //         case "3":
+    //         case '3':
     //             key3 = !key3;
     //             break;
-    //         case "0":
+    //         case '0':
     //             key0 = !key0;
     //             break;
     //     }
     //
-    //     link.style("display", function (d) {
+    //     link.style('display', function (d) {
     //         var flag = vis_by_type(d.source.type) && vis_by_type(d.target.type) && vis_by_node_score(d.source.score) && vis_by_node_score(d.target.score) && vis_by_link_score(d.score);
-    //         linkedByIndex[d.source.index + "," + d.target.index] = flag;
-    //         return flag ? "inline" : "none";
+    //         linkedByIndex[d.source.index + ',' + d.target.index] = flag;
+    //         return flag ? 'inline' : 'none';
     //     });
-    //     node.style("display", function (d) {
-    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
+    //     node.style('display', function (d) {
+    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? 'inline' : 'none';
     //     });
-    //     text.style("display", function (d) {
-    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? "inline" : "none";
+    //     text.style('display', function (d) {
+    //         return (key0 || hasConnections(d)) && vis_by_type(d.type) && vis_by_node_score(d.score) ? 'inline' : 'none';
     //     });
     //
     //     if (highlight_node !== null) {
@@ -339,7 +358,7 @@ function resize() {
         delW = w - svgWidth,
         delH = h - svgHeight;
 
-    svg.attr("width", w).attr("height", h);
+    svg.attr('width', w).attr('height', h);
     force.size([
         force.size()[0] + delW / zoom.scale(),
         force.size()[1] + delH / zoom.scale()
@@ -350,13 +369,13 @@ function resize() {
 }
 
 // var mousemoved = false;
-// $graph.on("mousedown", function (e) {
+// $graph.on('mousedown', function (e) {
 //         mousemoved = false;
 //     })
-//     .on("mousemove", function (e) {
+//     .on('mousemove', function (e) {
 //         mousemoved = true;
 //     })
-//     .on("mouseup", function (e) {
+//     .on('mouseup', function (e) {
 //         if (mousemoved === false) {
 //             // click
 //             if (e.button == 0 && // right button
@@ -371,21 +390,21 @@ function resize() {
 //     });
 
 // palette = {
-//     "lightgray": "#819090",
-//     "gray": "#708284",
-//     "mediumgray": "#536870",
-//     "darkgray": "#475B62",
-//     "darkblue": "#0A2933",
-//     "darkerblue": "#042029",
-//     "paleryellow": "#FCF4DC",
-//     "paleyellow": "#EAE3CB",
-//     "yellow": "#A57706",
-//     "orange": "#BD3613",
-//     "red": "#D11C24",
-//     "pink": "#C61C6F",
-//     "purple": "#595AB7",
-//     "blue": "#2176C7",
-//     "green": "#259286",
-//     "yellowgreen": "#738A05"
+//     'lightgray': '#819090',
+//     'gray': '#708284',
+//     'mediumgray': '#536870',
+//     'darkgray': '#475B62',
+//     'darkblue': '#0A2933',
+//     'darkerblue': '#042029',
+//     'paleryellow': '#FCF4DC',
+//     'paleyellow': '#EAE3CB',
+//     'yellow': '#A57706',
+//     'orange': '#BD3613',
+//     'red': '#D11C24',
+//     'pink': '#C61C6F',
+//     'purple': '#595AB7',
+//     'blue': '#2176C7',
+//     'green': '#259286',
+//     'yellowgreen': '#738A05'
 // };
 
