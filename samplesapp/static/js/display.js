@@ -10,11 +10,13 @@ var $graph = $('#graph'),
     $details = $('#details-modal'),
     $pdfBtn = $('#pdf-btn'),
     $txtBtn = $('#txt-btn'),
+    $tooltip = $('#tooltip'),
     // D3 colour scale
     color = d3.scale.category20(),
     // margin = {top: -5, right: -5, bottom: -5, left: -5},
     svgWidth = $graph.width(),
-    svgHeight = $graph.height(docH * .8).height()
+    svgHeight = $graph.height(docH * .8).height(),
+    svgOffset = $graph.offset()
 ;
 
 
@@ -107,8 +109,6 @@ var linkLable = g.selectAll('.link')
     .attr('text-anchor', 'middle')
     .text(function (d) { return d.type; });
 
-// tooltip
-// https://bl.ocks.org/davidcdupuis/3f9db940e27e07961fdbaba9f20c79ec
 
 // create nodes
 var node = g.selectAll('.node')
@@ -213,7 +213,6 @@ function arcPath(leftHand, d) {
 }
 
 function zoomed() {
-    // add drag and zoom to g
     g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
 }
 
@@ -246,13 +245,17 @@ function dragstart(d) {
 }
 
 function dragend(d) {
+    d3.select(this).classed('fixed', d.fixed = true);
+    d3.select(this).classed('selected', d.selected = true);
+    d3.select(this).selectAll('circle')
+        .attr('r', radius + 5);
     // left click
     if (d3.event.sourceEvent.button == 0) {
         d3.event.sourceEvent.preventDefault();
-        d3.select(this).classed('fixed', d.fixed = true);
-        d3.select(this).classed('selected', d.selected = true);
-        d3.select(this).selectAll('circle')
-            .attr('r', radius + 5);
+        // d3.select(this).classed('fixed', d.fixed = true);
+        // d3.select(this).classed('selected', d.selected = true);
+        // d3.select(this).selectAll('circle')
+        //     .attr('r', radius + 5);
 
         $pdfBtn.removeClass('disabled');
         $txtBtn.removeClass('disabled');
@@ -261,13 +264,44 @@ function dragend(d) {
     if (d3.event.sourceEvent.button == 2) {
         d3.event.sourceEvent.preventDefault();
         populateDetails(d);
-        $details.modal('show');
+        showTooltip(d.x, d.y);
     }
+}
+
+
+// TOOLTIP
+// -------
+// hide tooltip when clicking anywhere but a graph component
+$('body').click(function (e) {
+    if (e.button == 0 &&
+        (e.target.nodeName == 'svg' || e.target.parentElement.className == 'page')) {
+        hideTooltip();
+    }
+});
+$tooltip.find('#details-btn').on('click', function (e) {
+    $details.modal('show');
+});
+
+function showTooltip(x, y) {
+    var deltaX = $tooltip.width() / 2 - svgOffset.left;
+    var deltaY = $tooltip.height() - svgOffset.top + 15;
+    $tooltip.css('top', (y - deltaY) + 'px');
+    $tooltip.css('left', (x - deltaX) + 'px');
+    $tooltip.show(200);
+}
+
+function hideTooltip() {
+    $tooltip.hide();
 }
 
 function populateDetails(d) {
     $details.find('#details-title').html(d.id);
 }
+
+
+
+// UTILITIES
+// ---------
 
 function noNodeSelected() {
     for (var i = 0; i < data.nodes.length; i++) {

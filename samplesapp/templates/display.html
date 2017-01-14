@@ -8,6 +8,7 @@
         {#    <div class="msg-box">#}
         {#        <div class="msg"></div>#}
         {#    </div>#}
+
         <a id="txt-btn" type="button" class="btn btn-default disabled" href="#">
             <i class="fa fa-file-text-o" aria-hidden="true"></i>
         </a>
@@ -17,12 +18,14 @@
     </div>
 
     <div class="page-content">
+        {% include "tooltip.html" %}
         <div id="graph" class="graph"></div>
 
         {% include "filtercolumn.html" %}
     </div>
 
     {% include "sampledetails.html" %}
+
     {#    <script type="text/javascript" src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>#}
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript">
