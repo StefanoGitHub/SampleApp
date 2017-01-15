@@ -2,9 +2,9 @@
 
 .space-buttom { margin-bottom: 25px; }
 small{ font-size: 80%; line-height: 1.5; display: block; margin-top: .3em; }
-label { padding: 0 0 0 3em !important; }
+/*label { padding: 0 0 0 3em !important; }*/
 
-form { margin-bottom: 2.5em; min-width: 880px;}
+form { margin: 0 auto 2.5em; width: 880px; }
 
 .input-group > span.input-group-addon { font-size: .7em;}
 

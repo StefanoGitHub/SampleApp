@@ -4,6 +4,7 @@ $('.input-group.date').datepicker({
     todayHighlight: true,
     format: 'yyyy-mm-dd',
     toggleActive: true,
+    autoclose: true,
 });
 
 

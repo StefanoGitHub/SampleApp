@@ -38,7 +38,8 @@ $filterSelect.on('change', function (e) {
     }
     var unit = $filterSelect.find('option:selected').data('unit');
     // disable selected option
-    $filterSelect.find('option:selected').attr('disabled', 'disabled');
+    $filterSelect.find('option:selected').prop('disabled', true);
+    $filterSelect.selectpicker('refresh');
 
     fields += 1;
     var id = 'f' + fields;
@@ -54,7 +55,8 @@ $filterSelect.on('change', function (e) {
         var $target = $('.field.' + id);
         var value = $target.data('value');
         $target.remove();
-        $filterSelect.find('option[value="'+ value+'"]').removeAttr('disabled');
+        $filterSelect.find('option[value="'+ value+'"]').prop('disabled', false);
+        $filterSelect.selectpicker('refresh');
         fields -= 1;
         if (fields == 0) {
             $filterBtn.hide();
@@ -68,7 +70,8 @@ $filterSelect.on('change', function (e) {
 
 $removeBtn.on('click', function (e) {
     $fields.find('.field').remove();
-    $filterSelect.find('option').removeAttr('disabled');
+    $filterSelect.find('option').prop('disabled', false);
+    $filterSelect.selectpicker('refresh');
     $filterBtn.hide();
 });
 

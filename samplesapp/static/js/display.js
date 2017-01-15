@@ -6,6 +6,8 @@
 var $graph = $('#graph'),
     docH = $(document).height(),
     radius = 20,
+    increasedRadius = 25,
+    currentRadius = radius,
     iconSide = 30,
     $details = $('#details-modal'),
     $pdfBtn = $('#pdf-btn'),
@@ -18,7 +20,6 @@ var $graph = $('#graph'),
     svgHeight = $graph.height(docH * .8).height(),
     svgOffset = $graph.offset()
 ;
-
 
 // -----------------------------
 // adapt links data to D3 format
@@ -90,8 +91,13 @@ svg.append('marker')
         .attr('fill', 'darkgrey')
         .attr('stroke', 'darkgrey');
 
+// // add tooltip html to svg
+// // so when zooming position referenc is correct
+// $('svg').append($('#tlp-template').html());
+// $('#tlp-template').remove();
+
 // create a g(roup) tag container for each node
-var g = svg.append('g');
+var g = svg.append('g').attr('class', 'svg');
 
 // add link lines
 var link = g.selectAll('.link')
@@ -102,7 +108,7 @@ var link = g.selectAll('.link')
     .attr('class', 'link-line')
     .attr('marker-end', 'url(#arrow)'); // append arrow head
 
-var linkLable = g.selectAll('.link')
+var linkLabel = g.selectAll('.link')
     .append('text')
     .attr('class', 'link-label')
     .attr('dy', '-.2em')
@@ -132,7 +138,6 @@ var image = node.append('image')
 
 
 var mouseDown = false;
-
 node.on('dblclick', nodeDblclick)
     // .on('click', onNodeClick)
     .on('contextmenu', nodeRightClick)
@@ -147,7 +152,8 @@ node.on('dblclick', nodeDblclick)
             d3.select(this).selectAll('circle')
                 .transition()
                 .duration(50)
-                .attr('r', radius + 5);
+                .attr('r', increasedRadius);
+            currentRadius = increasedRadius;
         }
     })
     .on('mouseout', function (d, i) {
@@ -157,6 +163,7 @@ node.on('dblclick', nodeDblclick)
                 .transition()
                 .duration(50)
                 .attr('r', radius);
+            currentRadius = radius;
         }
     })
     .call(drag);
@@ -191,7 +198,7 @@ function tick() {
         .attr('x2', function (d) { return d.target.x; })
         .attr('y2', function (d) { return d.target.y; });
 
-    linkLable
+    linkLabel
         .attr('transform', function (d) {
             var a = d.source.x - d.target.x;
             var b = d.source.y - d.target.y;
@@ -214,16 +221,25 @@ function tick() {
 //         sweep = leftHand ? 0 : 1;
 //     return 'M' + start.x + ',' + start.y + 'A' + dr + ',' + dr + ' 0 0,' + sweep + ' ' + end.x + ',' + end.y;
 // }
-
 function zoomed() {
-    // todo integrate tooltip with zoom
-    g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-    var id = $tooltip.find('#add-sample-btn').data('sampleid');
-    if (id) {
-        var t = d3.select(this);
-        debugger;
-        positionTooltip(d)
+    if (d3.event.scale != 1) {
+        hideTooltip();
     }
+    var ttpPosition = $tooltip.offset();
+    var $circle = $('g.svg circle').first();
+    var original = $circle.offset();
+    // // todo integrate tooltip with zoom
+    g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+    var newPosition = $circle.offset();
+
+    var deltaX = original.left - newPosition.left;
+    var deltaY = original.top - newPosition.top;
+    $tooltip.css({
+        'left': (ttpPosition.left - deltaX) + 'px',
+        'top': (ttpPosition.top - deltaY) + 'px'
+    });
+
+    currentRadius *= $circle.attr('r');
 }
 
 
@@ -274,20 +290,36 @@ function dragend(d) {
     if (d3.event.sourceEvent.button == 2) {
         d3.event.sourceEvent.preventDefault();
         populateDetails(d);
-        showTooltip(d);
+        // load selected node's id in the new sample button
+        $tooltip.find('#add-sample-btn').data('sampleid', d.id);
+        // debugger;
+        var offset = $(this).find('circle').offset();
+        showTooltip(offset.left + radius, offset.top);
     }
 }
 
 
 // TOOLTIP
 // -------
-// hide tooltip when clicking anywhere but a graph component
-$('body').click(function (e) {
-    if (e.button == 0 &&
-        (e.target.nodeName == 'svg' || e.target.parentElement.className == 'page')) {
-        hideTooltip();
-    }
-});
+// hide tooltip when clicking (not dragging) anywhere but a graph component
+var mousemoved = false;
+$('body')
+    .on('mousedown', function (e) { mousemoved = false; })
+    .on('mousemove', function (e) { mousemoved = true; })
+    .on('mouseup', function (e) {
+        if (mousemoved === false) {
+            // click
+            if (e.button == 0 &&
+                (e.target.nodeName == 'svg' || e.target.parentElement.className == 'page')) {
+                hideTooltip();
+            }
+        } else {
+            // drag
+        }
+        mousemoved = false;
+    });
+
+
 $tooltip.find('#details-btn').on('click', function (e) {
     $details.modal('show');
 });
@@ -300,16 +332,15 @@ $tooltip.find('#lineage-btn').on('click', function (e) {
 // todo implement behaviour
 });
 
-function showTooltip(d) {
-    $tooltip.find('#add-sample-btn').data('sampleid', d.id);
-    positionTooltip(d);
+function showTooltip(x, y) {
+    var halfWidth = $tooltip.width() / 2;
+    var height = $tooltip.height();
+    // debugger;
+    $tooltip.css({
+        left: (x - halfWidth + currentRadius) + 'px',
+        top: (y - height + 10) + 'px'
+    });
     $tooltip.show();
-}
-function positionTooltip(d){
-    var deltaX = $tooltip.width() / 2 - svgOffset.left;
-    var deltaY = $tooltip.height() - svgOffset.top + 15;
-    $tooltip.css('top', (d.y - deltaY) + 'px');
-    $tooltip.css('left', (d.x - deltaX) + 'px');
 }
 
 function hideTooltip() {
@@ -425,26 +456,6 @@ function resize() {
     svgHeight = h;
 }
 
-// var mousemoved = false;
-// $graph.on('mousedown', function (e) {
-//         mousemoved = false;
-//     })
-//     .on('mousemove', function (e) {
-//         mousemoved = true;
-//     })
-//     .on('mouseup', function (e) {
-//         if (mousemoved === false) {
-//             // click
-//             if (e.button == 0 && // right button
-//                 e.target.nodeName != 'circle' && e.target.nodeName != 'g' &&
-//                 e.target.nodeName != 'text' && e.target.nodeName != 'line') {
-//                 // showDetails(false);
-//             }
-//         } else {
-//             // drag
-//         }
-//         mousemoved = false;
-//     });
 
 // palette = {
 //     'lightgray': '#819090',
