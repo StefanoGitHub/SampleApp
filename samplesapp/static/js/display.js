@@ -133,8 +133,8 @@ var image = node.append('image')
 
 var mouseDown = false;
 
-node    // .on('click', onNodeClick)
-    .on('dblclick', nodeDblclick)
+node.on('dblclick', nodeDblclick)
+    // .on('click', onNodeClick)
     .on('contextmenu', nodeRightClick)
     // track mouse button
     // mainly to avoid wrong behaviour on mouseover/out
@@ -202,18 +202,28 @@ function tick() {
         });
 }
 
-function arcPath(leftHand, d) {
-    var start = leftHand ? d.source : d.target,
-        end = leftHand ? d.target : d.source,
-        dx = end.x - start.x,
-        dy = end.y - start.y,
-        dr = Math.sqrt(dx * dx + dy * dy),
-        sweep = leftHand ? 0 : 1;
-    return 'M' + start.x + ',' + start.y + 'A' + dr + ',' + dr + ' 0 0,' + sweep + ' ' + end.x + ',' + end.y;
-}
+// curved links
+// ------------
+// http://bl.ocks.org/mfolnovic/6269308/086c505caa848750ab9916bd48906b4057e6f288
+// function arcPath(leftHand, d) {
+//     var start = leftHand ? d.source : d.target,
+//         end = leftHand ? d.target : d.source,
+//         dx = end.x - start.x,
+//         dy = end.y - start.y,
+//         dr = Math.sqrt(dx * dx + dy * dy),
+//         sweep = leftHand ? 0 : 1;
+//     return 'M' + start.x + ',' + start.y + 'A' + dr + ',' + dr + ' 0 0,' + sweep + ' ' + end.x + ',' + end.y;
+// }
 
 function zoomed() {
+    // todo integrate tooltip with zoom
     g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+    var id = $tooltip.find('#add-sample-btn').data('sampleid');
+    if (id) {
+        var t = d3.select(this);
+        debugger;
+        positionTooltip(d)
+    }
 }
 
 
@@ -225,11 +235,11 @@ function nodeDblclick(d) {
     d3.select(this).classed('selected', d.selected = false);
     d3.select(this).selectAll('circle')
         .attr('r', radius);
-
     if (noNodeSelected()) {
         $pdfBtn.addClass('disabled');
         $txtBtn.addClass('disabled');
     }
+    hideTooltip();
     force.resume();
 }
 
@@ -264,7 +274,7 @@ function dragend(d) {
     if (d3.event.sourceEvent.button == 2) {
         d3.event.sourceEvent.preventDefault();
         populateDetails(d);
-        showTooltip(d.x, d.y);
+        showTooltip(d);
     }
 }
 
@@ -281,13 +291,25 @@ $('body').click(function (e) {
 $tooltip.find('#details-btn').on('click', function (e) {
     $details.modal('show');
 });
+$tooltip.find('#add-sample-btn').on('click', function (e) {
+    var id = $(e.target).data('sampleid');
+    var url = '//' + window.location.host + '/add?id=' + id;
+    window.open(url);
+});
+$tooltip.find('#lineage-btn').on('click', function (e) {
+// todo implement behaviour
+});
 
-function showTooltip(x, y) {
+function showTooltip(d) {
+    $tooltip.find('#add-sample-btn').data('sampleid', d.id);
+    positionTooltip(d);
+    $tooltip.show();
+}
+function positionTooltip(d){
     var deltaX = $tooltip.width() / 2 - svgOffset.left;
     var deltaY = $tooltip.height() - svgOffset.top + 15;
-    $tooltip.css('top', (y - deltaY) + 'px');
-    $tooltip.css('left', (x - deltaX) + 'px');
-    $tooltip.show(200);
+    $tooltip.css('top', (d.y - deltaY) + 'px');
+    $tooltip.css('left', (d.x - deltaX) + 'px');
 }
 
 function hideTooltip() {
@@ -295,6 +317,7 @@ function hideTooltip() {
 }
 
 function populateDetails(d) {
+    // todo complete details
     $details.find('#details-title').html(d.id);
 }
 

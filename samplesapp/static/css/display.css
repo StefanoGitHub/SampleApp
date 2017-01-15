@@ -13,9 +13,9 @@
 /*.msg-box { background: #cee5F5; fill-opacity: 0.8; padding: 0.5em; border: 1px solid #869eb5;*/
     /*-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; z-index: 1; position: relative;}*/
 
-#title-bar { width: 69.5%; }
+#button-bar { width: 69.5%; }
 h2 { display: inline-block; }
-#pdf-btn, #txt-btn { margin: 2.1em 0 0 .5em; float: right; }
+#pdf-btn, #txt-btn { margin: 0 0 1em; float: right; }
 
 #details-modal { font-size: .9em; }
 #details-modal p { margin-bottom: .1em; }
@@ -24,29 +24,6 @@ h2 { display: inline-block; }
 .modal-content { background: lightyellow; margin-top: 100px; }
 .modal-header { background: gold; }
 
-#filter-box { height: 100%; width: 29.5%; margin-left:.5%; display: inline-block; float: right;}
-#filter-box .title { display: inline-block;}
-
-/*#details-panel .panel-body { font-size: .8em;}*/
-/*#details-panel .bold { font-weight: bold;}*/
-/*#details-panel .unit { font-style: italic;}*/
-
-/*#lineage-btn { float: right; position: relative; top: -7px; }*/
-
-#filter-select { display: inline-block; }
-#filter-box { height: 100%; width: 29.5%; padding-left: 2em; float: left; }
-
-.fields { margin: .7em 0; }
-.fields .input-group { margin-bottom: 15px;}
-
-.fields .form-group { display: flex; }
-.fields .form-control { font-size: .9em;}
-.fields .form-group.no-unit input{ height: 30px;}
-
-.field { display:block; margin: .5em 0;}
-.field button { float: left; margin-right: .5em; position: relative; top: 4px; }
-
-#filter-btn {  }
 
 #lineage-btn .fa-code-fork { font-size: 14px; }
 

@@ -1,5 +1,6 @@
 
-
+// templates
+// ---------
 var fieldTpl = function(name, unit, id) {
     return '<div class="field ' + id + '" data-value="'+name+'">' +
             '<button class="btn btn-default btn-xs remove-' + id + '">' +
@@ -27,6 +28,7 @@ var fields = 0;
 var $filterBtn = $('#filter-btn');
 var $fields = $('.fields');
 var $filterSelect = $('#filter-select');
+var $removeBtn = $('#remove-fields-btn');
 
 $filterSelect.on('change', function (e) {
     var name = $filterSelect.val();
@@ -62,6 +64,12 @@ $filterSelect.on('change', function (e) {
     $filterSelect.val('');
     $filterBtn.show();
 
+});
+
+$removeBtn.on('click', function (e) {
+    $fields.find('.field').remove();
+    $filterSelect.find('option').removeAttr('disabled');
+    $filterBtn.hide();
 });
 
 $filterBtn.on('click', function (e) {

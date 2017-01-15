@@ -13,11 +13,20 @@ def home():
 # add new sample
 @app.route('/add', methods = ['GET', 'POST'])
 def add():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        # details = request.form
+        # Sample(details).register_sample()
+        # flash('Success! Your new sample has been saved', 'info')
+        sampleid = request.args.get('id', '', type = str)
+        # return jsonify(result = a + b)
+    elif request.method == 'POST':
         details = request.form
         Sample(details).register_sample()
         flash('Success! Your new sample has been saved', 'info')
-    return render_template('add.html')
+        # sampleid = ''
+    # else:
+        # sampleid = ''
+    return render_template('add.html', selected = sampleid )
 
 
 # display the samples graph

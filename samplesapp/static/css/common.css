@@ -38,10 +38,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 body { font-family: "Exo 2", "Helvetica Neue", Helvetica, sans-serif; font-weight: 300;
     font-size: 1em; line-height: 1.2em; background: lightyellow; color: #475B62;}
 strong { font-weight: 600; }
-h1, h2, h3, h4, h5, h6 { font-family: 'Roboto Slab', "Helvetica Neue", Helvetica, sans-serif; font-weight: 700;
-    color: #CB4B19; font-size: 1.75em; margin: 1.2em 0 1em; }
+h1, h2, h3, h4, h5, h6 { font-family: 'Roboto Slab', "Helvetica Neue", Helvetica, sans-serif; font-weight: 700; color: #CB4B19;}
 p { margin-bottom: .5em; }
 
+h1.title { float: left; position: absolute; top: .4em; font-size: 1.7em; }
 .page { width: 95%; margin: 0 auto; min-height: 600px; min-width: 880px;}
 
 .navbar { text-align: right; background: gold; -webkit-border-radius: 0; -moz-border-radius: 0; border-radius: 0;}

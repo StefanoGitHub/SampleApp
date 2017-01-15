@@ -18,12 +18,15 @@ graph = Graph(url + '/db/data/', username = dbuser, password = dbpwd)
 class Sample:
     def __init__(self, newsample):
         self._id = str(uuid.uuid4())
+        self.id = newsample.id
         self.added = timestamp()
         self.name = newsample.name
         self.creationDate = newsample.creationDate
         self.creator = newsample.creator
         self.isolMethod = newsample.isolMethod
         self.parent = newsample.parent
+        self.source = newsample.source
+        self.type = newsample.type
         self.errors = newsample.errors
         self.volume = newsample.volume
         self.notes = newsample.notes
@@ -43,12 +46,15 @@ class Sample:
         newsample = Node(
             'Sample',
             _id = self._id,
+            id = self.id,
             added = self.added,
             name = self.name,
             creationDate = self.creationDate,
             creator = self.creator,
             isolMethod = self.isolMethod,
             parent = self.parent,
+            source = self.source,
+            type = self.type,
             errors = self.errors,
             volume = self.volume,
             notes = self.notes,

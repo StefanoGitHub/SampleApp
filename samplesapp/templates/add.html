@@ -2,14 +2,12 @@
 
 {% block page %}
 
-    <!-- import css -->
     {# https://github.com/uxsolutions/bootstrap-datepicker #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css"/>
     {#    <script src="{{ url_for('static', filename='vendor/bs-datepicker/css/bs-datepicker3.1.6.4.min.css') }}"></script>#}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/add.css') }}">
 
-    <h1>Create a new sample</h1>
-
+    <h1 class="title">Create a new sample</h1>
 
     <form class="ui form" action="{{ url_for('add') }}" method="post">
         {# name | creator #}
@@ -24,6 +22,27 @@
                 <label for="creator" class="col-xs-2 col-form-label">Creator</label>
                 <div class="col-xs-4">
                     <input class="form-control" type="text" value="" id="creator">
+                </div>
+
+            </div>
+        </div>
+        {# parent | type #}
+        <div class="form-group row space-buttom">
+            <div class="col-xl-6">
+                <label for="parent" class="col-xs-2 col-form-label">Parent sample</label>
+                <div class="col-xs-4">
+                    <input class="form-control" type="text" id="name" value="{{ selected }}">
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <label for="type-select" class="col-xs-2 col-form-label">Type</label>
+                <div class="col-xs-4">
+                    <select id="type-select" name="type">
+                        <option value="">...</option>
+                        <option value="Type1">Type1</option>
+                        <option value="Type2">Type2</option>
+                        <option value="Type3">Type3</option>
+                    </select>
                 </div>
 
             </div>
