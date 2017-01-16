@@ -1,0 +1,35 @@
+
+.page-content { width: 100%; display: inline-block; min-height: 680px}
+#graph { width: 69.5%;  border: 1px solid #d3d3d3; float: left; }
+
+.node { stroke: darkgrey; stroke-width: 1px; fill: lightgrey; cursor: move; }
+.node.selected { fill: #fff3b1; stroke: gold; stroke-width: 2px;}
+.node-label { font-family: 'Source Code Pro', Menlo, Consolas, Monaco, monospace; font-size: 1.2em;
+             fill: black; color:black; stroke: black; stroke-width: 1px;}
+
+.link { stroke: darkgrey; stroke-opacity: .6; }
+.link-label { stroke: #2f434a; fill: #2f434a; stroke-opacity: 1; fill-opacity: 1; font-size: .6em;}
+
+/*.msg-box { background: #cee5F5; fill-opacity: 0.8; padding: 0.5em; border: 1px solid #869eb5;*/
+    /*-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; z-index: 1; position: relative;}*/
+
+#button-bar { width: 69.5%; }
+h2 { display: inline-block; }
+#pdf-btn, #txt-btn { margin: 0 0 1em; float: right; }
+
+#details-modal { font-size: .9em; }
+#details-modal p { margin-bottom: .1em; }
+#details-modal .bold { font-weight: bold; }
+
+.modal-content { background: lightyellow; margin-top: 100px; }
+.modal-header { background: gold; }
+
+#lineage-btn .fa-code-fork { font-size: 14px; }
+
+#node-menu { display: inline-block; position: absolute; }
+
+.arrow_box { position: relative; background: lightyellow; border: 1px solid gold; margin-bottom: 12px}
+.arrow_box:after, .arrow_box:before { top: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; }
+.arrow_box:after { border-color: rgba(255, 255, 224, 0); border-top-color: lightyellow; border-width: 8px; margin-left: -8px; }
+.arrow_box:before { border-color: rgba(255, 215, 0, 0); border-top-color: gold; border-width: 10px; margin-left: -10px; }
+

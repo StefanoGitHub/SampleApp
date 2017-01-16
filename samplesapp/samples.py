@@ -1,6 +1,7 @@
 from py2neo import Graph, Node, Relationship
 from passlib.hash import bcrypt  # encrypt pwd
 from flask import Response
+import json
 from datetime import datetime
 import os
 import uuid  # generate unique IDs
@@ -16,96 +17,108 @@ graph = Graph(url + '/db/data/', username = dbuser, password = dbpwd)
 # Sample class
 # --------------------------
 class Sample:
-    def __init__(self, newsample):
-        self._id = str(uuid.uuid4())
-        self.id = newsample.id
-        self.added = timestamp()
-        self.name = newsample.name
-        self.creationDate = newsample.creationDate
-        self.creator = newsample.creator
-        self.isolMethod = newsample.isolMethod
-        self.parent = newsample.parent
-        self.source = newsample.source
-        self.type = newsample.type
-        self.errors = newsample.errors
-        self.volume = newsample.volume
-        self.notes = newsample.notes
-        self.details = newsample.details
-        self.rin = newsample.rin
-        self.concBio = newsample.concBio
-        self.corrConcBio = newsample.corrConcBio
-        self.dilution = newsample.dilution
-        self.a280 = newsample.a280
-        self.a230 = newsample.a230
-        self.concNano = newsample.concNano
-        self.yieldBio = newsample.yieldBio
-        self.yieldNano = newsample.yieldNano
-        
+    """ Represents a Sample object saved in the DB
+    implements the methods to interact with the DB
+    """
+    
+    def __init__(self, sampleid):
+        """ Create Sample object """
+        self.id = sampleid
 
-    def register_sample(self):
-        newsample = Node(
-            'Sample',
-            _id = self._id,
-            id = self.id,
-            added = self.added,
-            name = self.name,
-            creationDate = self.creationDate,
-            creator = self.creator,
-            isolMethod = self.isolMethod,
-            parent = self.parent,
-            source = self.source,
-            type = self.type,
-            errors = self.errors,
-            volume = self.volume,
-            notes = self.notes,
-            details = self.details,
-            rin = self.rin,
-            concBio = self.concBio,
-            corrConcBio = self.corrConcBio,
-            dilution = self.dilution,
-            a280 = self.a280,
-            a230 = self.a230,
-            concNano = self.concNano,
-            yieldBio = self.yieldBio,
-            yieldNano = self.yieldNano,
-        )
-        graph.create(newsample)
-        return self
+    def find(self):
+        """ Finds the (current) sample in the DB; returns the Sample or None if not found"""
+        sample = graph.find_one('Sample', 'id', self.id)  # returns None obj if not found
+        return sample
+
+    def save_sample(self, sample_data):
+        """ Saves the passed data as a new sample in the DB """
+        if self.find() is not None:
+            new_sample = Node(
+                'Sample',
+                # _id = str(uuid.uuid4()),
+                id = sample_data.id,
+                added = timestamp(),
+                name = sample_data.name,
+                creationDate = sample_data.creationDate,
+                creator = sample_data.creator,
+                isolMethod = sample_data.isolMethod,
+                parent = sample_data.parent,
+                source = sample_data.source,
+                type = sample_data.type,
+                errors = sample_data.errors,
+                volume = sample_data.volume,
+                notes = sample_data.notes,
+                details = sample_data.details,
+                rin = sample_data.rin,
+                concBio = sample_data.concBio,
+                corrConcBio = sample_data.corrConcBio,
+                dilution = sample_data.dilution,
+                a280 = sample_data.a280,
+                a230 = sample_data.a230,
+                concNano = sample_data.concNano,
+                yieldBio = sample_data.yieldBio,
+                yieldNano = sample_data.yieldNano,
+            )
+            graph.create(new_sample)
+            return True
+        else:
+            return False
 
     def get_lineage(self):
+        """ Returns the set of nodes and links composing the lineage of the current (self) Sample;
+            The links array lists the connections source-target between two nodes, where the numbers correspond
+            to the index of the node in the nodes list
+            example:
+              "links": [
+                { "source":0, "target":14, "type":"GENERATED" },
+                { "source":0, "target":13, "type":"GENERATED" },
+                { "source":0, "target":1,  "type":"GENERATED" },
+                ...
+              ],
+              "nodes": [
+                { "id":"A", "name":"A" },
+                { "id":"B", "name":"B" },
+                { "id":"C", "name":"C" },
+                ...
+              ]
+        """
         # query = '''
         #     MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
         #     WHERE s.name = {name}
         #     RETURN s, lineage
         # '''
         query = '''
-            MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
-            WHERE s.name = {name}
-            RETURN s, lineage
+            MATCH (sample:Sample {name:{id}})
+            OPTIONAL MATCH (t:Sample {name:{id}})-[:CHILD_OF*]->(parent:Sample)
+            OPTIONAL MATCH (parent)-[r_out]->(child)-[r_in]->(parent)
+            RETURN
+                sample,
+                collect({ source: parent, type: type(r_out), target: child }) AS rel_out,
+                collect({ source: child, type: type(r_in), target: parent }) AS rel_in;
         '''
-        return graph.run(query, name = self.name)
-        # nodes_query = '''
-        #     MATCH (a:Person)-[:ACTED_IN]->(:Movie)
-        #     RETURN DISTINCT ID(a) AS id, a.name AS name
-        # '''
-        # edges_query = '''
-        #     MATCH (a1:Person)-[:ACTED_IN]->(:Movie)<-[:ACTED_IN]-(a2:Person)
-        #     RETURN ID(a1) AS source, ID(a2) AS target
-        # '''
-
-    def find(self):
-        sample = graph.find_one('Sample', '_id', self._id)  # returns None obj if not found
-        return sample
+        result = graph.data(query, id = self.id)
+        nodes = []
+        links = []
+        for node in result:
+            node['sample']['id'] = node['id']
+            nodes.append(node['sample'])
+            source = node['id']
+            for rel in node['relations']:
+                links.append({ "source": source, "target": rel['target'], "type": rel['type'] })
+        return { "nodes": nodes, "links": links }
 
 
-    def generate_sample(self, child):
-        if child.find():
-            return False
-        rel = Relationship(self.find(), 'GENERATED', child)
-        graph.create(rel)
-        rel = Relationship(child, 'CHILD_OF', self.find())
-        graph.create(rel)
-        return False
+
+
+
+    # def generate_sample(self, child):
+    #     if child.find():
+    #         return False
+    #     rel = Relationship(self.find(), 'GENERATED', child)
+    #     graph.create(rel)
+    #     rel = Relationship(child, 'CHILD_OF', self.find())
+    #     graph.create(rel)
+    #     return False
 
     def is_composed_by(self, parent1, parent2):
         child = self.find()
@@ -123,29 +136,33 @@ class Sample:
 # Utility functions
 # --------------------------
 
-def get_samples():
-    query = '''
-        MATCH (s) return s
-        WHERE post.date = {today}
-        RETURN user.username AS username, post, COLLECT(tag.name) AS tags
-        ORDER BY post.timestamp DESC LIMIT 5
-    '''
-    return graph.run(query, today = date())
+# def get_samples():
+#     query = '''
+#         MATCH (s) return s
+#         WHERE post.date = {today}
+#         RETURN user.username AS username, post, COLLECT(tag.name) AS tags
+#         ORDER BY post.timestamp DESC LIMIT 5
+#     '''
+#     return graph.run(query, today = date())
 
 def get_all():
-    # query = '''
-    #     MATCH path = (s)-[r]->(n)
-    #     RETURN { sample: s, relations: collect({ type: type(r), target: n }) } AS node
-    # '''
     query = '''
-        MATCH path = (s)-[r]->(n)
+        MATCH (s)-[r]->(n)
         RETURN s AS sample, s.name AS id, collect({ type: type(r), target: n.name }) AS relations
         ORDER BY sample.name
     '''
-    results = graph.data(query)
+    """ for now there is only the name property in each node, later will refer to them with the id"""
+    # query = '''
+    #     MATCH path = (s)-[r]->(n)
+    #     RETURN
+    #       s AS sample, s.id AS id,
+    #       collect({ type: type(r), target: n.id }) AS relations
+    #     ORDER BY sample.id
+    # '''
+    result = graph.data(query)
     nodes = []
     links = []
-    for node in results:
+    for node in result:
         node['sample']['id'] = node['id']
         nodes.append(node['sample'])
         source = node['id']

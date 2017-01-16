@@ -34,32 +34,16 @@ data.links.forEach(function (el) {
     el.target = data.nodes.findIndex(targetNode);
 });
 
-/* ===============================
- REQUIRED DATA FORMAT FOR D3:
- ----------------------------
-   "links": [
-     { "source":0, "target":14, "type":"GENERATED" },
-     { "source":0, "target":13, "type":"GENERATED" },
-     { "source":0, "target":1,  "type":"GENERATED" },
-     ...
-   ],
-   "nodes": [
-     { "id":"A", "name":"A" },
-     { "id":"B", "name":"B" },
-     { "id":"C", "name":"C" },
-     ...
-   ]
- =============================== */
 
 // ---------------------------------
 // set up D3 force layout components
 // ---------------------------------
 var force = d3.layout.force()
     .linkDistance(130)
-    .gravity(0.1)
-    // .friction(.7)
+    .gravity(.2)
+    // .friction(.5)
     // .linkStrength(1)
-    .charge(-1300)
+    .charge(-1000)
     .size([svgWidth, svgHeight])
     .on('tick', tick);
 
@@ -137,7 +121,7 @@ var circle = node.append('circle')
 // add labels
 var nodeLabel = node.append('text')
     .attr('class', 'node-label')
-    .text(function (d) { return d.id; });
+    .text(function (d) { return d.name; });
 // add icon
 var image = node.append('image')
     .attr('xlink:href', iconLink)
@@ -366,9 +350,9 @@ $nodeMenu.find('#add-sample-btn').on('click', function (e) {
 });
 $nodeMenu.find('#lineage-btn').on('click', function (e) {
     // todo implement behaviour
-    var id = $(e.target).data('sampleid');
-    var url = '//' + window.location.host + '/lineage?id=' + id;
-    window.open(url);
+    // var id = $(e.target).data('sampleid');
+    // var url = '//' + window.location.host + '/lineage?id=' + id;
+    // window.open(url);
 });
 
 function showNodeMenu(newNodeCenter) {

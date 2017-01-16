@@ -22,10 +22,10 @@
     </div>
 
     <div class="page-content">
-        {% include "nodemenu.html" %}
+{#        {% include "tooltip.html" %}#}
         <div id="graph" class="graph"></div>
 
-        {% include "filtercolumn.html" %}
+{#        {% include "filtercolumn.html" %}#}
     </div>
 
     {% include "sampledetails.html" %}
@@ -39,7 +39,7 @@
     </script>
 
     <script src="{{ url_for('static', filename='vendor/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/display.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/filter.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/lineage.js') }}"></script>
+{#    <script type="text/javascript" src="{{ url_for('static', filename='js/filter.js') }}"></script>#}
 
 {% endblock page %}
