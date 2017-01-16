@@ -6,19 +6,16 @@
 var $graph = $('#graph'),
     docH = $(document).height(),
     radius = 20,
-    increasedRadius = 25,
     currentRadius = radius,
     iconSide = 30,
     $details = $('#details-modal'),
     $pdfBtn = $('#pdf-btn'),
     $txtBtn = $('#txt-btn'),
-    $tooltip = $('#tooltip'),
+    $nodeMenu = $('#node-menu'),
     // D3 colour scale
-    color = d3.scale.category20(),
-    // margin = {top: -5, right: -5, bottom: -5, left: -5},
+    // color = d3.scale.category20(),
     svgWidth = $graph.width(),
-    svgHeight = $graph.height(docH * .8).height(),
-    svgOffset = $graph.offset()
+    svgHeight = $graph.height(docH * .8).height()
 ;
 
 // -----------------------------
@@ -44,7 +41,7 @@ data.links.forEach(function (el) {
 var force = d3.layout.force()
     .linkDistance(130)
     .gravity(.2)
-    // .friction(.05)
+    // .friction(.5)
     // .linkStrength(1)
     .charge(-1000)
     .size([svgWidth, svgHeight])
@@ -56,7 +53,7 @@ var zoom = d3.behavior.zoom()
 
 var drag = force.drag()
     .on('dragstart', dragstart)
-    // .on('drag', dragmove)
+    .on('drag', dragmove)
     .on('dragend', dragend);
 
 
@@ -69,7 +66,7 @@ var drag = force.drag()
 var svg = d3.select('#graph').append('svg')
     .attr('width', svgWidth)
     .attr('height', svgHeight);
-    svg.call(zoom)
+svg.call(zoom)
     .on('dblclick.zoom', null);
 
 // create arrow head
@@ -91,12 +88,9 @@ svg.append('marker')
         .attr('fill', 'darkgrey')
         .attr('stroke', 'darkgrey');
 
-// // add tooltip html to svg
-// // so when zooming position referenc is correct
-// $('svg').append($('#tlp-template').html());
-// $('#tlp-template').remove();
 
-// create a g(roup) tag container for each node
+// create a g(roup) tag container for the whole graph
+// zoom will apply to it
 var g = svg.append('g').attr('class', 'svg');
 
 // add link lines
@@ -105,8 +99,8 @@ var link = g.selectAll('.link')
     .enter().append('g')
     .attr('class', 'link')
     .append('line')
-    .attr('class', 'link-line')
-    .attr('marker-end', 'url(#arrow)'); // append arrow head
+        .attr('class', 'link-line')
+        .attr('marker-end', 'url(#arrow)'); // append arrow head
 
 var linkLabel = g.selectAll('.link')
     .append('text')
@@ -116,27 +110,26 @@ var linkLabel = g.selectAll('.link')
     .text(function (d) { return d.type; });
 
 
-// create nodes
+// create nodes appending each a g(roup) tag, which will contain all its components
 var node = g.selectAll('.node')
     .data(data.nodes)
     .enter().append('g')
     .attr('class', 'node' );
-
 // add circles
 var circle = node.append('circle')
     .attr('r', radius);
-
 // add labels
 var nodeLabel = node.append('text')
     .attr('class', 'node-label')
     .text(function (d) { return d.name; });
-
+// add icon
 var image = node.append('image')
     .attr('xlink:href', iconLink)
     .attr('width', iconSide)
     .attr('height', iconSide);
 
 
+// actions on node
 var mouseDown = false;
 node.on('dblclick', nodeDblclick)
     // .on('click', onNodeClick)
@@ -149,27 +142,31 @@ node.on('dblclick', nodeDblclick)
         if (!mouseDown) {
             // debugger;
             d3.select(this).classed('fixed', d.fixed = true);
-            d3.select(this).selectAll('circle')
-                .transition()
-                .duration(50)
-                .attr('r', increasedRadius);
-            currentRadius = increasedRadius;
+            if (!d.selected) {
+                d3.select(this).selectAll('circle')
+                    .transition().duration(50)
+                    .style('opacity', '0.7');
+                d3.select(this).selectAll('image')
+                    .transition().duration(50)
+                    .style('opacity', '0.7');
+            }
         }
     })
     .on('mouseout', function (d, i) {
         if (!d.selected && !mouseDown) {
             d3.select(this).classed('fixed', d.fixed = false);
             d3.select(this).selectAll('circle')
-                .transition()
-                .duration(50)
-                .attr('r', radius);
-            currentRadius = radius;
+                .transition().duration(50)
+                .style('opacity', '1');
+            d3.select(this).selectAll('image')
+                .transition().duration(50)
+                .style('opacity', '1');
         }
     })
     .call(drag);
 
 
-//Creates the graph data structure out of the json data
+// Dump data into the graph and activate force
 force.nodes(data.nodes)
     .links(data.links)
     .start();
@@ -181,7 +178,8 @@ $(window).on('resize', resize); //.on('keydown', keydown);
 resize();
 
 
-//
+// TICK
+// ----
 function tick() {
     circle.attr('cx', function (d) { return d.x ; })
         .attr('cy', function (d) { return d.y ; });
@@ -198,8 +196,7 @@ function tick() {
         .attr('x2', function (d) { return d.target.x; })
         .attr('y2', function (d) { return d.target.y; });
 
-    linkLabel
-        .attr('transform', function (d) {
+    linkLabel.attr('transform', function (d) {
             var a = d.source.x - d.target.x;
             var b = d.source.y - d.target.y;
             var alpha = Math.atan(b/a) * (180 / Math.PI);
@@ -207,6 +204,34 @@ function tick() {
             var midY = (d.source.y + d.target.y) / 2;
             return 'translate(' + midX + ',' + midY + ') rotate(' + alpha + ')';
         });
+}
+
+// ZOOM
+// ----
+var currentScale = 1;
+function zoomed() {
+    // hide when zooming
+    if (d3.event.scale != currentScale) {
+        hideNodeMenu();
+    }
+    currentScale = d3.event.scale;
+
+    var $svg = $('g.svg').first();
+    var ttpPosition = $nodeMenu.offset();
+    var initNodeOffset = $svg.offset();
+
+    g.attr('transform', 'translate(' + d3.event.translate + ') scale(' + d3.event.scale + ')');
+
+    // calculate actual translation on screen
+    var newNodeOffset = $svg.offset();
+    var dX = +newNodeOffset.left - +initNodeOffset.left;
+    var dY = +newNodeOffset.top - +initNodeOffset.top;
+    $nodeMenu.css({
+        'left': (+ttpPosition.left + dX) + 'px',
+        'top': (+ttpPosition.top + dY) + 'px'
+    });
+    // update radius length on screen
+    currentRadius = radius * d3.event.scale;
 }
 
 // curved links
@@ -221,28 +246,25 @@ function tick() {
 //         sweep = leftHand ? 0 : 1;
 //     return 'M' + start.x + ',' + start.y + 'A' + dr + ',' + dr + ' 0 0,' + sweep + ' ' + end.x + ',' + end.y;
 // }
-function zoomed() {
-    if (d3.event.scale != 1) {
-        hideTooltip();
-    }
-    var ttpPosition = $tooltip.offset();
-    var $circle = $('g.svg circle').first();
-    var original = $circle.offset();
-    // // todo integrate tooltip with zoom
-    g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-    var newPosition = $circle.offset();
 
-    var deltaX = original.left - newPosition.left;
-    var deltaY = original.top - newPosition.top;
-    $tooltip.css({
-        'left': (ttpPosition.left - deltaX) + 'px',
-        'top': (ttpPosition.top - deltaY) + 'px'
-    });
 
-    currentRadius *= $circle.attr('r');
+// RESIZE
+// ------
+function resize() {
+    var w = $graph.width(),
+        h = $graph.height(docH * .8).height(),
+        delW = w - svgWidth,
+        delH = h - svgHeight;
+
+    svg.attr('width', w).attr('height', h);
+    force.size([
+        force.size()[0] + delW / zoom.scale(),
+        force.size()[1] + delH / zoom.scale()
+    ]).resume();
+
+    svgWidth = w;
+    svgHeight = h;
 }
-
-
 
 // NODES METHODS
 // -------------
@@ -255,7 +277,7 @@ function nodeDblclick(d) {
         $pdfBtn.addClass('disabled');
         $txtBtn.addClass('disabled');
     }
-    hideTooltip();
+    hideNodeMenu();
     force.resume();
 }
 
@@ -263,26 +285,25 @@ function nodeRightClick(d, i) {
     d3.event.preventDefault();
 }
 
-
-// DRAGS METHODS
-// -------------
 function dragstart(d) {
     d3.event.sourceEvent.stopPropagation();
+}
+function dragmove(d) {
+    d3.event.sourceEvent.stopPropagation();
+    hideNodeMenu();
 }
 
 function dragend(d) {
     d3.select(this).classed('fixed', d.fixed = true);
     d3.select(this).classed('selected', d.selected = true);
     d3.select(this).selectAll('circle')
-        .attr('r', radius + 5);
+        .style('opacity', '1');
+    d3.select(this).selectAll('image')
+        .style('opacity', '1');
+
     // left click
     if (d3.event.sourceEvent.button == 0) {
         d3.event.sourceEvent.preventDefault();
-        // d3.select(this).classed('fixed', d.fixed = true);
-        // d3.select(this).classed('selected', d.selected = true);
-        // d3.select(this).selectAll('circle')
-        //     .attr('r', radius + 5);
-
         $pdfBtn.removeClass('disabled');
         $txtBtn.removeClass('disabled');
     }
@@ -291,17 +312,17 @@ function dragend(d) {
         d3.event.sourceEvent.preventDefault();
         populateDetails(d);
         // load selected node's id in the new sample button
-        $tooltip.find('#add-sample-btn').data('sampleid', d.id);
-        // debugger;
-        var offset = $(this).find('circle').offset();
-        showTooltip(offset.left + radius, offset.top);
+        $nodeMenu.find('#add-sample-btn').data('sampleid', d.id);
+        // define circle's center
+        var nodePosition = $(this).find('circle').offset();
+        showNodeMenu(nodePosition);
     }
 }
 
 
-// TOOLTIP
+// NODE MENU
 // -------
-// hide tooltip when clicking (not dragging) anywhere but a graph component
+// hide nodeMenu when clicking (not dragging) anywhere but a graph component
 var mousemoved = false;
 $('body')
     .on('mousedown', function (e) { mousemoved = false; })
@@ -311,7 +332,7 @@ $('body')
             // click
             if (e.button == 0 &&
                 (e.target.nodeName == 'svg' || e.target.parentElement.className == 'page')) {
-                hideTooltip();
+                hideNodeMenu();
             }
         } else {
             // drag
@@ -319,32 +340,32 @@ $('body')
         mousemoved = false;
     });
 
-
-$tooltip.find('#details-btn').on('click', function (e) {
+$nodeMenu.find('#details-btn').on('click', function (e) {
     $details.modal('show');
 });
-$tooltip.find('#add-sample-btn').on('click', function (e) {
+$nodeMenu.find('#add-sample-btn').on('click', function (e) {
     var id = $(e.target).data('sampleid');
     var url = '//' + window.location.host + '/add?id=' + id;
     window.open(url);
 });
-$tooltip.find('#lineage-btn').on('click', function (e) {
-// todo implement behaviour
+$nodeMenu.find('#lineage-btn').on('click', function (e) {
+    // todo implement behaviour
+    // var id = $(e.target).data('sampleid');
+    // var url = '//' + window.location.host + '/lineage?id=' + id;
+    // window.open(url);
 });
 
-function showTooltip(x, y) {
-    var halfWidth = $tooltip.width() / 2;
-    var height = $tooltip.height();
-    // debugger;
-    $tooltip.css({
-        left: (x - halfWidth + currentRadius) + 'px',
-        top: (y - height + 10) + 'px'
-    });
-    $tooltip.show();
+function showNodeMenu(newNodeCenter) {
+    var halfWidth = $nodeMenu.outerWidth() / 2;
+    var height = $nodeMenu.outerHeight();
+    $nodeMenu.css({
+        'left': (+newNodeCenter.left - halfWidth + currentRadius) + 'px',
+        'top': (+newNodeCenter.top - height) + 'px'
+    });    $nodeMenu.show();
 }
 
-function hideTooltip() {
-    $tooltip.hide();
+function hideNodeMenu() {
+    $nodeMenu.hide();
 }
 
 function populateDetails(d) {
@@ -438,22 +459,6 @@ function keydown() {
     //     }
     //
     // }
-}
-
-function resize() {
-    var w = $graph.width(),
-        h = $graph.height(docH * .8).height(),
-        delW = w - svgWidth,
-        delH = h - svgHeight;
-
-    svg.attr('width', w).attr('height', h);
-    force.size([
-        force.size()[0] + delW / zoom.scale(),
-        force.size()[1] + delH / zoom.scale()
-    ]).resume();
-
-    svgWidth = w;
-    svgHeight = h;
 }
 
 
