@@ -38,7 +38,36 @@ CREATE (a:Sample {id: 1, name: "A"})
      , (m:Sample {id: 13, name: "M"})
      , (n:Sample {id: 14, name: "N"})
      , (o:Sample {id: 15, name: "O"})
-     , (p:Sample {id: 16, name: "P"})
+     , (p:Sample {id: 16, name: "P"}),
+
+ (i)-[:GENERATED]->(d)-[:CHILD_OF]->(i),
+ (i)-[:GENERATED]->(j)-[:CHILD_OF]->(i),
+ (g)-[:COMPOSED]->(f)<-[:COMPOSED]-(h),
+ (g)<-[:SUM_OF]-(f)-[:SUM_OF]->(h),
+
+ (l)-[:CLONED]->(k)<-[:BECAME]-(l),
+ (e)-[:CLONED]->(c)<-[:BECAME]-(e),
+
+ (a)-[:GENERATED]->(o)-[:CHILD_OF]->(a),
+ (a)-[:GENERATED]->(n)-[:CHILD_OF]->(a),
+
+ (b)-[:GENERATED]->(m)-[:CHILD_OF]->(b),
+
+ (b)-[:GENERATED]->(m)-[:CHILD_OF]->(b),
+ (b)-[:GENERATED]->(a)-[:CHILD_OF]->(b),
+ (b)-[:GENERATED]->(c)-[:CHILD_OF]->(b),
+
+ (i)-[:GENERATED]->(b)-[:CHILD_OF]->(i),
+ (i)-[:GENERATED]->(j)-[:CHILD_OF]->(i),
+ (i)-[:GENERATED]->(d)-[:CHILD_OF]->(i),
+
+ (j)-[:COMPOSED]->(p)-[:CHILD_OF]->(j),
+ (p)-[:SUM_OF]->(j),
+ (d)-[:COMPOSED]->(p)-[:CHILD_OF]->(p),
+ (p)-[:SUM_OF]->(d)
+
+
+
 RETURN a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p
 
 // get all
@@ -73,5 +102,22 @@ set copy=map return copy
 
 
 // get lineage
-match (p:Sample {name:"P"})-[:CHILD_OF*]->(lineage:Sample)
-return p, lineage;
+
+// get nodes and links
+MATCH lineage = (child:Sample {name:"P"})-[:CHILD_OF*]->(parent:Sample)
+MATCH (n:Sample)-[r_out]->(m:Sample)-[r_in]->(n:Sample)
+    WHERE n IN nodes(lineage) AND m IN nodes(lineage)
+RETURN
+    child + collect(DISTINCT parent) AS nodes,
+    collect(DISTINCT {source: n, rel: type(r_out), target: m}) +
+    collect(DISTINCT {source: m, rel: type(r_in), target: n}) AS links
+
+// get nodes
+MATCH lineage = (child:Sample {name:"P"})-[r:CHILD_OF*]->(parent:Sample)
+RETURN child + collect(DISTINCT parent) AS nodes;
+
+//MATCH lineage = (n:Sample {name:"P"})-[:CHILD_OF*]->(parent:Sample)
+//MATCH (a:Sample)-[r]-(b:Sample)
+//WHERE a IN nodes(lineage) AND b IN nodes(lineage)
+//RETURN distinct a
+
