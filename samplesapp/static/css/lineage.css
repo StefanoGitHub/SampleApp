@@ -1,11 +1,14 @@
 
-.page-content { width: 100%; display: inline-block; min-height: 680px}
-#graph { width: 69.5%;  border: 1px solid #d3d3d3; float: left; }
+.page-content { width: 100%; display: inline-block; min-height: 680px;}
+
+#graph { width: 100%; border: 1px solid #d3d3d3; float: left; }
 
 .node { stroke: darkgrey; stroke-width: 1px; fill: lightgrey; cursor: move; }
 .node.selected { fill: #fff3b1; stroke: gold; stroke-width: 2px;}
 .node-label { font-family: 'Source Code Pro', Menlo, Consolas, Monaco, monospace; font-size: 1.2em;
              fill: black; color:black; stroke: black; stroke-width: 1px;}
+.node image:hover { opacity: .7; }
+.node.selected image:hover { opacity: 1; }
 
 .link { stroke: darkgrey; stroke-opacity: .6; }
 .link-label { stroke: #2f434a; fill: #2f434a; stroke-opacity: 1; fill-opacity: 1; font-size: .6em;}
@@ -13,7 +16,8 @@
 /*.msg-box { background: #cee5F5; fill-opacity: 0.8; padding: 0.5em; border: 1px solid #869eb5;*/
     /*-webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; z-index: 1; position: relative;}*/
 
-#button-bar { width: 69.5%; }
+#button-bar { width: 100%; }
+#button-bar a { margin-left: .3em; }
 h2 { display: inline-block; }
 #pdf-btn, #txt-btn { margin: 0 0 1em; float: right; }
 

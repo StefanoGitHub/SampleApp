@@ -12,43 +12,48 @@ var $graph = $('#graph'),
     $pdfBtn = $('#pdf-btn'),
     $txtBtn = $('#txt-btn'),
     $nodeMenu = $('#node-menu'),
-    // D3 colour scale
-    // color = d3.scale.category20(),
     svgWidth = $graph.width(),
     svgHeight = $graph.height(docH * .8).height()
 ;
 
 // -----------------------------
-// adapt links data to D3 format
+// add node id
 // -----------------------------
-data.links.forEach(function (el) {
-    var sourceId = el.source;
-    var targetId = el.target;
-    var sourceNode = function (element) {
-        return element.id == sourceId
-    };
-    var targetNode = function (element) {
-        return element.id == targetId
-    };
-    el.source = data.nodes.findIndex(sourceNode);
-    el.target = data.nodes.findIndex(targetNode);
+data.nodes.forEach(function (node) {
+    node.id = node.name;
 });
 
+/* ===============================
+ REQUIRED DATA FORMAT FOR D3:
+ ----------------------------
+   "links": [
+     { "source":0, "target":14, "type":"GENERATED" },
+     { "source":0, "target":13, "type":"GENERATED" },
+     { "source":0, "target":1,  "type":"GENERATED" },
+     ...
+   ],
+   "nodes": [
+     { "id":"A", "name":"A" },
+     { "id":"B", "name":"B" },
+     { "id":"C", "name":"C" },
+     ...
+   ]
+ =============================== */
 
 // ---------------------------------
 // set up D3 force layout components
 // ---------------------------------
 var force = d3.layout.force()
     .linkDistance(130)
-    .gravity(.2)
-    // .friction(.5)
+    .gravity(0.5)
+    // .friction(.7)
     // .linkStrength(1)
-    .charge(-1000)
+    .charge(-2000)
     .size([svgWidth, svgHeight])
     .on('tick', tick);
 
 var zoom = d3.behavior.zoom()
-    .scaleExtent([0.2, 5])
+    .scaleExtent([0.5, 4])
     .on('zoom', zoomed);
 
 var drag = force.drag()
@@ -121,7 +126,7 @@ var circle = node.append('circle')
 // add labels
 var nodeLabel = node.append('text')
     .attr('class', 'node-label')
-    .text(function (d) { return d.name; });
+    .text(function (d) { return d.id; });
 // add icon
 var image = node.append('image')
     .attr('xlink:href', iconLink)
@@ -140,28 +145,20 @@ node.on('dblclick', nodeDblclick)
     .on('mouseup', function (d, i) { mouseDown = false; })
     .on('mouseover', function (d, i) {
         if (!mouseDown) {
-            // debugger;
             d3.select(this).classed('fixed', d.fixed = true);
             if (!d.selected) {
                 d3.select(this).selectAll('circle')
-                    .transition().duration(50)
-                    .style('opacity', '0.7');
-                d3.select(this).selectAll('image')
-                    .transition().duration(50)
-                    .style('opacity', '0.7');
+                    .style('fill', '#BBBBBB');
             }
         }
     })
     .on('mouseout', function (d, i) {
         if (!d.selected && !mouseDown) {
             d3.select(this).classed('fixed', d.fixed = false);
-            d3.select(this).selectAll('circle')
-                .transition().duration(50)
-                .style('opacity', '1');
-            d3.select(this).selectAll('image')
-                .transition().duration(50)
-                .style('opacity', '1');
         }
+        d3.select(this).selectAll('circle')
+            .attr('style', null);
+
     })
     .call(drag);
 
@@ -297,9 +294,7 @@ function dragend(d) {
     d3.select(this).classed('fixed', d.fixed = true);
     d3.select(this).classed('selected', d.selected = true);
     d3.select(this).selectAll('circle')
-        .style('opacity', '1');
-    d3.select(this).selectAll('image')
-        .style('opacity', '1');
+        .attr('style', null);
 
     // left click
     if (d3.event.sourceEvent.button == 0) {
@@ -313,6 +308,7 @@ function dragend(d) {
         populateDetails(d);
         // load selected node's id in the new sample button
         $nodeMenu.find('#add-sample-btn').data('sampleid', d.id);
+        $nodeMenu.find('#lineage-btn').data('sampleid', d.id);
         // define circle's center
         var nodePosition = $(this).find('circle').offset();
         showNodeMenu(nodePosition);
@@ -322,6 +318,11 @@ function dragend(d) {
 
 // NODE MENU
 // -------
+
+if (window.location.pathname == '/lineage') {
+    $nodeMenu.find('#lineage-btn').prop("disabled", true);
+}
+
 // hide nodeMenu when clicking (not dragging) anywhere but a graph component
 var mousemoved = false;
 $('body')
@@ -340,6 +341,7 @@ $('body')
         mousemoved = false;
     });
 
+// initialize menu buttons
 $nodeMenu.find('#details-btn').on('click', function (e) {
     $details.modal('show');
 });
@@ -349,10 +351,9 @@ $nodeMenu.find('#add-sample-btn').on('click', function (e) {
     window.open(url);
 });
 $nodeMenu.find('#lineage-btn').on('click', function (e) {
-    // todo implement behaviour
-    // var id = $(e.target).data('sampleid');
-    // var url = '//' + window.location.host + '/lineage?id=' + id;
-    // window.open(url);
+    var id = $(e.target).data('sampleid');
+    var url = '//' + window.location.host + '/lineage?id=' + id;
+    window.open(url);
 });
 
 function showNodeMenu(newNodeCenter) {

@@ -70,41 +70,46 @@ class Sample:
             to the index of the node in the nodes list
             example:
               "links": [
-                { "source":0, "target":14, "type":"GENERATED" },
-                { "source":0, "target":13, "type":"GENERATED" },
-                { "source":0, "target":1,  "type":"GENERATED" },
+                { "source":"A", "target":"B", "type":"GENERATED" },
+                { "source":"B", "target":"I", "type":"CHILD_OF" },
+                { "source":"N", "target":"H",  "type":"GENERATED" },
                 ...
               ],
               "nodes": [
-                { "id":"A", "name":"A" },
-                { "id":"B", "name":"B" },
-                { "id":"C", "name":"C" },
+                { "id":"1", "name":"A" },
+                { "id":"2", "name":"B" },
+                { "id":"3", "name":"C" },
                 ...
               ]
         """
-        # query = '''
-        #     MATCH (s:Sample)-[:CHILD_OF*]->(lineage:Sample)
-        #     WHERE s.name = {name}
-        #     RETURN s, lineage
-        # '''
         query = '''
-            MATCH (sample:Sample {name:{id}})
-            OPTIONAL MATCH (t:Sample {name:{id}})-[:CHILD_OF*]->(parent:Sample)
-            OPTIONAL MATCH (parent)-[r_out]->(child)-[r_in]->(parent)
+            MATCH lineage = (child:Sample {name:{id}})-[:CHILD_OF*]->(parent:Sample)
+            MATCH (n:Sample)-[r_out]->(m:Sample)-[r_in]->(n:Sample)
+                WHERE n IN nodes(lineage) AND m IN nodes(lineage)
             RETURN
-                sample,
-                collect({ source: parent, type: type(r_out), target: child }) AS rel_out,
-                collect({ source: child, type: type(r_in), target: parent }) AS rel_in;
+                child + collect(DISTINCT parent) AS nodes,
+                collect(DISTINCT {source: n.name, rel: type(r_out), target: m.name}) +
+                collect(DISTINCT {source: m.name, rel: type(r_in), target: n.name}) AS links
         '''
         result = graph.data(query, id = self.id)
-        nodes = []
         links = []
-        for node in result:
-            node['sample']['id'] = node['id']
-            nodes.append(node['sample'])
-            source = node['id']
-            for rel in node['relations']:
-                links.append({ "source": source, "target": rel['target'], "type": rel['type'] })
+        if not result:  # no nodes
+            query = 'MATCH (n:Sample {name:{id}}) RETURN n AS nodes'
+            result = graph.data(query, id = self.id)[0]  # just the target sample
+            nodes = [result['nodes']]
+        else:
+            node_list = {}
+            data = result[0]
+            nodes = data['nodes']
+            for idx, node in enumerate(nodes):
+                node_list[node['name']] = idx
+                if node['name'] == self.id:
+                    node['target'] = True
+            for link in data['links']:
+                source = link['source']
+                target = link['target']
+                links.append({ "source": node_list[source], "target": node_list[target], "type": link['rel'] })
+                    
         return { "nodes": nodes, "links": links }
 
 
@@ -136,38 +141,24 @@ class Sample:
 # Utility functions
 # --------------------------
 
-# def get_samples():
-#     query = '''
-#         MATCH (s) return s
-#         WHERE post.date = {today}
-#         RETURN user.username AS username, post, COLLECT(tag.name) AS tags
-#         ORDER BY post.timestamp DESC LIMIT 5
-#     '''
-#     return graph.run(query, today = date())
-
 def get_all():
     query = '''
-        MATCH (s)-[r]->(n)
-        RETURN s AS sample, s.name AS id, collect({ type: type(r), target: n.name }) AS relations
-        ORDER BY sample.name
+        MATCH (s:Sample)-[r]->(n:Sample)
+        RETURN
+            collect(DISTINCT s) AS nodes,
+            collect({ source: s.name, rel: type(r), target: n.name }) AS links
     '''
-    """ for now there is only the name property in each node, later will refer to them with the id"""
-    # query = '''
-    #     MATCH path = (s)-[r]->(n)
-    #     RETURN
-    #       s AS sample, s.id AS id,
-    #       collect({ type: type(r), target: n.id }) AS relations
-    #     ORDER BY sample.id
-    # '''
     result = graph.data(query)
-    nodes = []
+    node_list = {}
+    data = result[0]
+    nodes = data['nodes']
     links = []
-    for node in result:
-        node['sample']['id'] = node['id']
-        nodes.append(node['sample'])
-        source = node['id']
-        for rel in node['relations']:
-            links.append({ "source": source, "target": rel['target'], "type": rel['type'] })
+    for idx, node in enumerate(nodes):
+        node_list[node['name']] = idx
+    for link in data['links']:
+        source = link['source']
+        target = link['target']
+        links.append({ "source": node_list[source], "target": node_list[target], "type": link['rel'] })
     return { "nodes": nodes, "links": links }
     
 

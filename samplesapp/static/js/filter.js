@@ -32,10 +32,8 @@ var $removeBtn = $('#remove-fields-btn');
 
 $filterSelect.on('change', function (e) {
     var name = $filterSelect.val();
+    if (!name) { return; }
 
-    if (!name) {
-        return;
-    }
     var unit = $filterSelect.find('option:selected').data('unit');
     // disable selected option
     $filterSelect.find('option:selected').prop('disabled', true);
@@ -60,12 +58,13 @@ $filterSelect.on('change', function (e) {
         fields -= 1;
         if (fields == 0) {
             $filterBtn.hide();
+            $removeBtn.prop('disabled', true);
         }
     });
 
+    $removeBtn.prop('disabled', false);
     $filterSelect.val('');
     $filterBtn.show();
-
 });
 
 $removeBtn.on('click', function (e) {
@@ -73,6 +72,8 @@ $removeBtn.on('click', function (e) {
     $filterSelect.find('option').prop('disabled', false);
     $filterSelect.selectpicker('refresh');
     $filterBtn.hide();
+    fields = 0;
+    $removeBtn.prop('disabled', true);
 });
 
 $filterBtn.on('click', function (e) {

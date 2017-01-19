@@ -1,7 +1,8 @@
 # neo4j-flask
 A microblog application written in Python powered by Flask and Neo4j. Extension of Flask's microblog tutorial, [Flaskr](http://flask.pocoo.org/docs/0.10/tutorial/).
 
-see [http://nicolewhite.github.io/neo4j-flask/index.html](http://nicolewhite.github.io/neo4j-flask/index.html)
+see  [http://nicolewhite.github.io/neo4j-flask/index.html](http://nicolewhite.github.io/neo4j-flask/index.html)
+OR  [https://vimeo.com/119497588](https://vimeo.com/119497588)
 
 ## Usage
 
@@ -48,3 +49,6 @@ lsof -ti:5000 | xargs kill
 Data example + info
 [https://www.lucidchart.com/documents/edit/10285c27-5c46-4f74-8b81-aa0c926dd3f7?shared=true&](https://www.lucidchart.com/documents/edit/10285c27-5c46-4f74-8b81-aa0c926dd3f7?shared=true&)
 
+py2noe 2.0 API doc [http://py2neo.org/2.0/cypher.html](http://py2neo.org/2.0/cypher.html)
+
+Cypher doc [https://neo4j.com/docs/developer-manual/current/cypher/](https://neo4j.com/docs/developer-manual/current/cypher/)

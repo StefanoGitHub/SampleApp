@@ -2,7 +2,7 @@ from samples import Sample, get_all
 from flask import Flask, request, session, redirect, url_for, render_template, flash
 
 app = Flask(__name__)
-
+app.secret_key = 'Lollapalooza'
 
 # welcome, choose what to do: add, delete or display
 @app.route('/')
@@ -40,11 +40,11 @@ def lineage():
     sample_id = request.args.get('id', '', type = str)
     if not sample_id:
         return render_template('home.html')
-    nodes = Sample(sample_id).get_lineage()
-    # if len(nodes) == 0:
-    #     flash('No ')
-    
-    return render_template('lineage.html', nodes = nodes)
+    data = Sample(sample_id).get_lineage()
+    if not data['links']:
+        flash('No parents for this node', 'warning')
+
+    return render_template('lineage.html', nodes = data)
 
 
 

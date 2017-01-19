@@ -3,15 +3,14 @@
 {% block page %}
 
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-select/dist/css/bootstrap-select.css') }}">
-    <link href="{{ url_for('static', filename='css/display.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/filter.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lineage.css') }}">
 
-    <h1 class="title">Samples3</h1>
+    <h1 class="title">Origin</h1>
 
     <div id="button-bar">
-        {#    <div class="msg-box">#}
-        {#        <div class="msg"></div>#}
-        {#    </div>#}
+        {#   <div class="msg-box">#}
+        {#       <div class="msg"></div>#}
+        {#   </div>#}
 
         <a id="txt-btn" type="button" class="btn btn-default disabled" href="#">
             <i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -22,24 +21,19 @@
     </div>
 
     <div class="page-content">
-{#        {% include "tooltip.html" %}#}
+        {% include "nodemenu.html" %}
         <div id="graph" class="graph"></div>
-
-{#        {% include "filtercolumn.html" %}#}
     </div>
 
     {% include "sampledetails.html" %}
 
-    {#    <script type="text/javascript" src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>#}
-    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script>window.d3 || document.write('<script src="{{ url_for('static', filename='vendor/d3.v3.min.js') }}">\x3C/script>')</script>
     <script type="text/javascript">
         var data = {{ nodes|tojson }},
             iconLink = "{{ url_for('static', filename='images/tube.png') }}"
         ;
     </script>
-
     <script src="{{ url_for('static', filename='vendor/bootstrap-select/dist/js/bootstrap-select.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/lineage.js') }}"></script>
-{#    <script type="text/javascript" src="{{ url_for('static', filename='js/filter.js') }}"></script>#}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
 
 {% endblock page %}
